@@ -1,7 +1,10 @@
 from tkinter import *
 from tkinter.filedialog import askopenfilename
 
-root = Tk()
+window = Tk()
+window.title = "Enter files"
+window.geometry("300x160")
+window.eval('tk::PlaceWindow . center')
 
 
 def chooseFile():
@@ -12,18 +15,20 @@ def chooseFile():
 
 def done():
     # function to do calculations should go here
-    root.destroy()  # if pressed first, then ends whole process
+    window.destroy()  # if pressed first, then ends whole process
 
 
 # this seems to be working
-button = Button(root, text="Select attributes file", command=chooseFile)
-button.pack()
-button2 = Button(root, text="Select the hard constraints", command=chooseFile)
-button2.pack()
-endButton = Button(root, text="Done", command=done)
+attributesButton = Button(window, text="Select attributes file", command=chooseFile)
+attributesButton.pack()
+constraintButton = Button(window, text="Select the hard constraints files", command=chooseFile)
+constraintButton.pack()
+preferencesButton = Button(window, text="Select the preferences files", command=chooseFile)
+preferencesButton.pack()
+endButton = Button(window, text="Done", command=done)
 endButton.pack(pady=20)
 
-root.mainloop()
+window.mainloop()
 
 """
 use this to function to get contents of a file into a variable, maybe an array of content? lines[i]
