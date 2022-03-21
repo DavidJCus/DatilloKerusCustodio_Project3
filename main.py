@@ -14,9 +14,9 @@ def chooseFile():
     filename = askopenfilename()  # show an "Open" dialog box and return the path to the selected file
     print("You chose: " + filename)
     with open(filename) as f:
-        lines = f.readlines()
+        lines = f.read()
     print(lines)
-    files.append(lines)
+    files.append(str(lines))
 
 
 def done():
