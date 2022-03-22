@@ -12,26 +12,29 @@ files = []  # Holds the content of opened files
 #######################################################################################################
 def setUpAttribute():
     attributes = files[0].split()
-    print("the first thing: " + attributes[0] + "the second thing" + attributes[1] +  "the third: " +attributes[2])
+    # print("the first thing: " + attributes[0] + "the second thing" + attributes[1] +  "the third: " +attributes[2])
     totalNumberOfAttributes = int(len(attributes)/3)
-    #attributeToNumber = {}
+    attributeToNumber = {}
     for a in range(totalNumberOfAttributes):
-        print(attributes[(a*3-2)])
-        print(attributes[(a*3-1)])
+        attributeToNumber[attributes[(a*3-2)]] = a + 1
+        attributeToNumber[attributes[(a * 3 - 1)]] = -1 * (a + 1)
+        # print(attributes[(a*3-2)])
+        # print(attributes[(a*3-1)])
+    # print(attributeToNumber)
 
 
 def chooseFile():
     Tk().withdraw()  # we don't want a full GUI, so keep the root window from appearing
     filename = askopenfilename()  # show an "Open" dialog box and return the path to the selected file
-    print("You chose: " + filename)
+    # print("You chose: " + filename)
     with open(filename) as f:
         lines = f.read().replace(',', '')
-    print(lines)
+    # print(lines)
     files.append(str(lines))
 
 
 def done():
-    print("You pressed done, here are the results")
+    # print("You pressed done, here are the results")
     # print("First file: " + str(files[0]) + " Second File: " + str(files[1]) + " Third File: " + str(files[2]))
     # function to do calculations should go here
     setUpAttribute()
@@ -50,12 +53,6 @@ endButton.pack(pady=20)
 
 window.mainloop()
 
-"""
-use this to function to get contents of a file into a variable, maybe an array of content? lines[i]
-
-with open(filename) as f:
-    lines = f.readlines()
-"""
 
 # Start to convert the example attribute file into CNF
 #######################################################################################################
