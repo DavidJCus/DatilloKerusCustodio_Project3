@@ -28,7 +28,7 @@ def setupHardConstraints():
     conversion = ' '.join(str(attributeToNumber.get(a, a)) for a in attributes)
     # print(attributes)
     # print(conversion)
-    lines = 1
+    lines = 1  # counts the amount of lines for the first line of CNF
     newNumbers = []
     conversionSplit = conversion.split()
     num = int(len(conversionSplit))
@@ -68,7 +68,8 @@ def setupHardConstraints():
             uniqueAttributes += 1
             uniqueList.append(a)
 
-    finalString = "p cnf " + str(uniqueAttributes) + " " + str(lines) + "\n"
+    # formats the final string to match CLASP requirements
+    finalString = "p cnf " + str(uniqueAttributes) + " " + str(lines) + "\n"  # first line
     num2 = int(len(newNumbers))
     for num in range(num2):
         if num < num2 and [num + 1] == '\n':
@@ -100,6 +101,7 @@ def done():
     setUpAttribute()
     setupHardConstraints()
     window.destroy()  # if pressed first, then ends whole process
+    exit()
 
 
 # this seems to be working
