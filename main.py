@@ -1,12 +1,23 @@
 from tkinter import *
 from tkinter.filedialog import askopenfilename
 
+
 window = Tk()
 window.title = "Enter files"
 window.geometry("300x160")
 window.eval('tk::PlaceWindow . center')
 
-files = []
+files = []  # Holds the content of opened files
+
+#######################################################################################################
+def setUpAttribute():
+    attributes = files[0].split()
+    print("the first thing: " + attributes[0] + "the second thing" + attributes[1] +  "the third: " +attributes[2])
+    totalNumberOfAttributes = int(len(attributes)/3)
+    #attributeToNumber = {}
+    for a in range(totalNumberOfAttributes):
+        print(attributes[(a*3-2)])
+        print(attributes[(a*3-1)])
 
 
 def chooseFile():
@@ -14,7 +25,7 @@ def chooseFile():
     filename = askopenfilename()  # show an "Open" dialog box and return the path to the selected file
     print("You chose: " + filename)
     with open(filename) as f:
-        lines = f.read()
+        lines = f.read().replace(',', '')
     print(lines)
     files.append(str(lines))
 
@@ -23,6 +34,7 @@ def done():
     print("You pressed done, here are the results")
     # print("First file: " + str(files[0]) + " Second File: " + str(files[1]) + " Third File: " + str(files[2]))
     # function to do calculations should go here
+    setUpAttribute()
     window.destroy()  # if pressed first, then ends whole process
 
 
@@ -44,3 +56,15 @@ use this to function to get contents of a file into a variable, maybe an array o
 with open(filename) as f:
     lines = f.readlines()
 """
+
+# Start to convert the example attribute file into CNF
+#######################################################################################################
+
+
+
+
+# Start to convert the example constraints file into CNF
+#######################################################################################################
+
+# Start to convert the example preferences file into CNF
+#######################################################################################################
