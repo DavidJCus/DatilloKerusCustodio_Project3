@@ -13,28 +13,30 @@ attributeToNumber = {}  # Dictionary mapping words in atributes file to numbers 
 #######################################################################################################
 def setUpAttribute():
     attributes = files[0].split()
+    #print(attributes)
     totalNumberOfAttributes = int(len(attributes) / 3)
-    for a in range(totalNumberOfAttributes):
+    for a in range(1, totalNumberOfAttributes + 1):
         # assigning numbers to attributes. Either x or -x
-        attributeToNumber[attributes[(a * 3 - 2)]] = a + 1
-        attributeToNumber[attributes[(a * 3 - 1)]] = -1 * (a + 1)
-        # print(attributes[(a*3-2)])
-        # print(attributes[(a*3-1)])
-    # print(attributeToNumber)
+        attributeToNumber[attributes[(a * 3 - 2)]] = a
+        attributeToNumber[attributes[(a * 3 - 1)]] = -1 * (a)
+        #print(attributes[(a*3-2)])
+        #print(attributes[(a*3-1)])
+    #print(attributeToNumber)
     return attributeToNumber
 
 #######################################################################################################
 def setupHardConstraints():
     # conversion replaces the words in the hard constraints file with their numeric value from attributeToNumber dict
-    attributes = files[1].split()
-    conversion = ' '.join(str(attributeToNumber.get(a, a)) for a in attributes)
-    # print(attributes)
-    # print(conversion)
-    lines = 1
+    constraints = files[1].split()
+    conversion = ' '.join(str(attributeToNumber.get(a, a)) for a in constraints)
+    #print(constraints)
+    #print(conversion)
+
     newNumbers = []  # this will store an array of the numbers we get after computing though the NOTs and ORs
     conversionSplit = conversion.split()
     num = int(len(conversionSplit))
     skip = 0
+    lines = 1
     for b in range(num):
         if skip == 1:
             skip = 0
@@ -59,17 +61,18 @@ def setupHardConstraints():
             newNumbers.append(int(conversionSplit[b]))
 
     newNumbers.append(0)  # adds a 0 to the last line
-    # print(conversionSplit)
-    # print(newNumbers)
+    #print(conversionSplit)
+    #print(newNumbers)
 
     # this gets the unique attributes for the first line of CLASP CNF input
     uniqueAttributes = -1  # this method counts 0 as a unique value, so we account for that by starting at -1
     uniqueList = []
     num3 = int(len(newNumbers))
+    print(num3)
     for a in range(num3):
         if newNumbers[a] != '\n' and abs(int(newNumbers[a])) not in uniqueList:
             uniqueAttributes += 1
-            uniqueList.append(a)
+            uniqueList.append(abs(int(newNumbers[a])))
 
     # final string is going to be our input for CLASP
     finalString = "p cnf " + str(uniqueAttributes) + " " + str(lines) + "\n"
