@@ -23,7 +23,7 @@ def setUpAttribute():
     # print(attributeToNumber)
     return attributeToNumber
 
-
+#######################################################################################################
 def setupHardConstraints():
     # conversion replaces the words in the hard constraints file with their numeric value from attributeToNumber dict
     attributes = files[1].split()
@@ -120,7 +120,6 @@ window.mainloop()
 
 # Start to convert the example attribute file into CNF
 #######################################################################################################
-
 
 # Start to convert the example constraints file into CNF
 #######################################################################################################
