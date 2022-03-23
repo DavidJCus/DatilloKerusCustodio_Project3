@@ -7,7 +7,7 @@ window.geometry("300x160")
 window.eval('tk::PlaceWindow . center')
 
 files = []  # Holds the content of opened files
-attributeToNumber = {}
+attributeToNumber = {}  # Dictionary mapping words in atributes file to numbers for CLASP input
 
 
 #######################################################################################################
@@ -15,6 +15,7 @@ def setUpAttribute():
     attributes = files[0].split()
     totalNumberOfAttributes = int(len(attributes) / 3)
     for a in range(totalNumberOfAttributes):
+        # assigning numbers to attributes. Either x or -x
         attributeToNumber[attributes[(a * 3 - 2)]] = a + 1
         attributeToNumber[attributes[(a * 3 - 1)]] = -1 * (a + 1)
         # print(attributes[(a*3-2)])
@@ -24,12 +25,13 @@ def setUpAttribute():
 
 
 def setupHardConstraints():
+    # conversion replaces the words in the hard constraints file with their numeric value from attributeToNumber dict
     attributes = files[1].split()
     conversion = ' '.join(str(attributeToNumber.get(a, a)) for a in attributes)
     # print(attributes)
     # print(conversion)
     lines = 1
-    newNumbers = []
+    newNumbers = []  # this will store an array of the numbers we get after computing though the NOTs and ORs
     conversionSplit = conversion.split()
     num = int(len(conversionSplit))
     skip = 0
@@ -38,12 +40,13 @@ def setupHardConstraints():
             skip = 0
             continue
         if conversionSplit[b] == 'NOT' and b > 1 and conversionSplit[b - 1] != 'OR':
-            # this adds the 0 and new line to the array of numbers
+            # this adds the 0 and new line to the array of numbers.
             newNumbers.append(0)
             newNumbers.append('\n')
             lines += 1
         if conversionSplit[b] == 'NOT':
-            # if there's a NOT, multiplies the next element by -1 then skips that number
+            # if there's a NOT, multiplies the next element by -1, adds it to the array, then skips computing
+            # the next element
             number = -1 * int(conversionSplit[b + 1])
             newNumbers.append(number)
             skip = 1
@@ -52,15 +55,15 @@ def setupHardConstraints():
             # if there's an OR, does nothing and just skips
             continue
         if conversionSplit[b] != 'NOT' or conversionSplit[b] != 'OR':
-            # if there's no NOT, just adds the number to the array
+            # if there's no NOT or an OR, just adds the number to the array
             newNumbers.append(int(conversionSplit[b]))
 
     newNumbers.append(0)  # adds a 0 to the last line
     # print(conversionSplit)
     # print(newNumbers)
 
-    # this gets the unique values for the first line of CNF input
-    uniqueAttributes = -1
+    # this gets the unique attributes for the first line of CLASP CNF input
+    uniqueAttributes = -1  # this method counts 0 as a unique value, so we account for that by starting at -1
     uniqueList = []
     num3 = int(len(newNumbers))
     for a in range(num3):
@@ -68,6 +71,7 @@ def setupHardConstraints():
             uniqueAttributes += 1
             uniqueList.append(a)
 
+    # final string is going to be our input for CLASP
     finalString = "p cnf " + str(uniqueAttributes) + " " + str(lines) + "\n"
     num2 = int(len(newNumbers))
     for num in range(num2):
