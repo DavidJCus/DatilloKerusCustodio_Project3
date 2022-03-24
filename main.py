@@ -115,6 +115,17 @@ bg = PhotoImage(file="C:\\Users\\James\\Documents\\AI\\Python_Project3\\AI_Proje
 myCanvas = Canvas(window, width=700, height=400)
 myCanvas.pack(fill="both", expand=True)
 
+#set image in canvas 
+myCanvas.create_image(0,0, image=bg, anchor="nw")
+
+#add a label
+myCanvas.create_text(100,20, text="Select an option", font=("Times new roman",24), fill="white")
+
+#adding needed buttons 
+attributesButton = Button(window, text="Select attributes file", command=chooseFile)
+constraintButton = Button(window, text="Select the hard constraints files", command=chooseFile)
+preferencesButton = Button(window, text="Select the preferences files", command=chooseFile)
+
 # this seems to be working
 # attributesButton = Button(window, text="Select attributes file", command=chooseFile)
 # attributesButton.pack()
