@@ -137,7 +137,7 @@ def done():
 
 
 # define image
-imagePath = os.path.join(ROOT_DIR, 'images.png')  # loads images.png no matter where the project is.
+imagePath = os.path.join(ROOT_DIR, 'images.png')  # loads images.png no matter where the project is located
 bg = PhotoImage(file=imagePath)
 
 # create canvas
