@@ -3,7 +3,7 @@ from tkinter.filedialog import askopenfilename
 
 window = Tk()
 window.title = "Enter files"
-window.geometry("300x160")
+window.geometry("700x400")
 window.eval('tk::PlaceWindow . center')
 
 files = []  # Holds the content of opened files
@@ -13,28 +13,30 @@ attributeToNumber = {}  # Dictionary mapping words in atributes file to numbers 
 #######################################################################################################
 def setUpAttribute():
     attributes = files[0].split()
+    #print(attributes)
     totalNumberOfAttributes = int(len(attributes) / 3)
-    for a in range(totalNumberOfAttributes):
+    for a in range(1, totalNumberOfAttributes + 1):
         # assigning numbers to attributes. Either x or -x
-        attributeToNumber[attributes[(a * 3 - 2)]] = a + 1
-        attributeToNumber[attributes[(a * 3 - 1)]] = -1 * (a + 1)
-        # print(attributes[(a*3-2)])
-        # print(attributes[(a*3-1)])
-    # print(attributeToNumber)
+        attributeToNumber[attributes[(a * 3 - 2)]] = a
+        attributeToNumber[attributes[(a * 3 - 1)]] = -1 * (a)
+        #print(attributes[(a*3-2)])
+        #print(attributes[(a*3-1)])
+    #print(attributeToNumber)
     return attributeToNumber
 
 #######################################################################################################
 def setupHardConstraints():
     # conversion replaces the words in the hard constraints file with their numeric value from attributeToNumber dict
-    attributes = files[1].split()
-    conversion = ' '.join(str(attributeToNumber.get(a, a)) for a in attributes)
-    # print(attributes)
-    # print(conversion)
-    lines = 1
+    constraints = files[1].split()
+    conversion = ' '.join(str(attributeToNumber.get(a, a)) for a in constraints)
+    #print(constraints)
+    #print(conversion)
+
     newNumbers = []  # this will store an array of the numbers we get after computing though the NOTs and ORs
     conversionSplit = conversion.split()
     num = int(len(conversionSplit))
     skip = 0
+    lines = 1
     for b in range(num):
         if skip == 1:
             skip = 0
@@ -59,17 +61,18 @@ def setupHardConstraints():
             newNumbers.append(int(conversionSplit[b]))
 
     newNumbers.append(0)  # adds a 0 to the last line
-    # print(conversionSplit)
-    # print(newNumbers)
+    #print(conversionSplit)
+    #print(newNumbers)
 
     # this gets the unique attributes for the first line of CLASP CNF input
     uniqueAttributes = -1  # this method counts 0 as a unique value, so we account for that by starting at -1
     uniqueList = []
     num3 = int(len(newNumbers))
+    print(num3)
     for a in range(num3):
         if newNumbers[a] != '\n' and abs(int(newNumbers[a])) not in uniqueList:
             uniqueAttributes += 1
-            uniqueList.append(a)
+            uniqueList.append(abs(int(newNumbers[a])))
 
     # final string is going to be our input for CLASP
     finalString = "p cnf " + str(uniqueAttributes) + " " + str(lines) + "\n"
@@ -105,16 +108,67 @@ def done():
     setupHardConstraints()
     window.destroy()  # if pressed first, then ends whole process
 
+#define image
+bg = PhotoImage(file="C:\\Users\\James\\Documents\\AI\\Python_Project3\\AI_Project3KerusCustodio\\images.png")
+
+#create canvas
+myCanvas = Canvas(window, width=700, height=400)
+myCanvas.pack(fill="both", expand=True)
+
+#set image in canvas 
+myCanvas.create_image(0,0, image=bg, anchor="nw")
+
+#add a label
+myCanvas.create_text(100,20, text="Select an option", font=("Times new roman",24), fill="white")
+
+# #adding needed buttons 
+# attributesButton = Button(window, text="Select attributes file", command=chooseFile)
+# constraintButton = Button(window, text="Select the hard constraints files", command=chooseFile)
+# preferencesButton = Button(window, text="Select the preferences files", command=chooseFile)
+
+# # creating windows of buttons and adding onto canvas
+# attributesButtonWindow = myCanvas.create_window(350,100, anchor="c", window=attributesButton)
+# constraintButtonWindow = myCanvas.create_window(350,130, anchor="c", window=constraintButton)
+# preferencesButtonWindow = myCanvas.create_window(350,160, anchor="c", window=preferencesButton)
+
+
+# add a drop down 
+
+def selected(event):
+    # if clicked.get() == "Select attributes file": popup to submit then execute below code
+    Submit = Button(window, text="Submit", command=chooseFile)
+    submitWindow = myCanvas.create_window(350,300, anchor="c", window=Submit)
+
+options = [
+    "Default",
+    "Select attributes file",
+    "Select the hard constraints files",
+    "Select the preferences files"
+]
+#take in selected val
+clicked = StringVar()
+#set default val
+clicked.set(options[0])
+
+#provide a menu
+ddl = OptionMenu(
+    window, 
+    clicked,
+    *options,
+    command=selected
+)
+#putting a window on a window
+ddlWindow = myCanvas.create_window(350,100, anchor="c", window=ddl)
 
 # this seems to be working
-attributesButton = Button(window, text="Select attributes file", command=chooseFile)
-attributesButton.pack()
-constraintButton = Button(window, text="Select the hard constraints files", command=chooseFile)
-constraintButton.pack()
-preferencesButton = Button(window, text="Select the preferences files", command=chooseFile)
-preferencesButton.pack()
-endButton = Button(window, text="Done", command=done)
-endButton.pack(pady=20)
+# attributesButton = Button(window, text="Select attributes file", command=chooseFile)
+# attributesButton.pack()
+# constraintButton = Button(window, text="Select the hard constraints files", command=chooseFile)
+# constraintButton.pack()
+# preferencesButton = Button(window, text="Select the preferences files", command=chooseFile)
+# preferencesButton.pack()
+# endButton = Button(window, text="Done", command=done)
+# endButton.pack(pady=20)
 
 window.mainloop()
 
