@@ -3,7 +3,7 @@ from tkinter.filedialog import askopenfilename
 
 window = Tk()
 window.title = "Enter files"
-window.geometry("300x160")
+window.geometry("700x400")
 window.eval('tk::PlaceWindow . center')
 
 files = []  # Holds the content of opened files
@@ -121,15 +121,43 @@ myCanvas.create_image(0,0, image=bg, anchor="nw")
 #add a label
 myCanvas.create_text(100,20, text="Select an option", font=("Times new roman",24), fill="white")
 
-#adding needed buttons 
-attributesButton = Button(window, text="Select attributes file", command=chooseFile)
-constraintButton = Button(window, text="Select the hard constraints files", command=chooseFile)
-preferencesButton = Button(window, text="Select the preferences files", command=chooseFile)
+# #adding needed buttons 
+# attributesButton = Button(window, text="Select attributes file", command=chooseFile)
+# constraintButton = Button(window, text="Select the hard constraints files", command=chooseFile)
+# preferencesButton = Button(window, text="Select the preferences files", command=chooseFile)
 
-# creating windows of buttons and adding onto canvas
-attributesButtonWindow = myCanvas.create_window(350,100, anchor="c", window=attributesButton)
-constraintButtonWindow = myCanvas.create_window(350,130, anchor="c", window=constraintButton)
-preferencesButtonWindow = myCanvas.create_window(350,160, anchor="c", window=preferencesButton)
+# # creating windows of buttons and adding onto canvas
+# attributesButtonWindow = myCanvas.create_window(350,100, anchor="c", window=attributesButton)
+# constraintButtonWindow = myCanvas.create_window(350,130, anchor="c", window=constraintButton)
+# preferencesButtonWindow = myCanvas.create_window(350,160, anchor="c", window=preferencesButton)
+
+# add a drop down 
+
+def selected(event):
+    # if clicked.get() == "Select attributes file": popup to submit then execute below code
+    Submit = Button(window, text="Submit", command=chooseFile)
+    submitWindow = myCanvas.create_window(350,300, anchor="c", window=Submit)
+
+options = [
+    "Default",
+    "Select attributes file",
+    "Select the hard constraints files",
+    "Select the preferences files"
+]
+#take in selected val
+clicked = StringVar()
+#set default val
+clicked.set(options[0])
+
+#provide a menu
+ddl = OptionMenu(
+    window, 
+    clicked,
+    *options,
+    command=selected
+)
+#putting a window on a window
+ddlWindow = myCanvas.create_window(350,100, anchor="c", window=ddl)
 
 # this seems to be working
 # attributesButton = Button(window, text="Select attributes file", command=chooseFile)
