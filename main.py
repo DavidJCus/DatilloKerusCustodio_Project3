@@ -3,7 +3,7 @@ from tkinter.filedialog import askopenfilename
 
 window = Tk()
 window.title = "Enter files"
-window.geometry("300x160")
+window.geometry("700x400")
 window.eval('tk::PlaceWindow . center')
 
 files = []  # Holds the content of opened files
