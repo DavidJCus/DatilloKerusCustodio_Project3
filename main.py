@@ -126,6 +126,11 @@ attributesButton = Button(window, text="Select attributes file", command=chooseF
 constraintButton = Button(window, text="Select the hard constraints files", command=chooseFile)
 preferencesButton = Button(window, text="Select the preferences files", command=chooseFile)
 
+# creating windows of buttons and adding onto canvas
+attributesButtonWindow = myCanvas.create_window(350,100, anchor="c", window=attributesButton)
+constraintButtonWindow = myCanvas.create_window(350,130, anchor="c", window=constraintButton)
+preferencesButtonWindow = myCanvas.create_window(350,160, anchor="c", window=preferencesButton)
+
 # this seems to be working
 # attributesButton = Button(window, text="Select attributes file", command=chooseFile)
 # attributesButton.pack()
