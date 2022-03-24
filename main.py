@@ -109,7 +109,7 @@ def done():
     window.destroy()  # if pressed first, then ends whole process
 
 
-# this seems to be working
+## this seems to be working
 attributesButton = Button(window, text="Select attributes file", command=chooseFile)
 attributesButton.pack()
 constraintButton = Button(window, text="Select the hard constraints files", command=chooseFile)
