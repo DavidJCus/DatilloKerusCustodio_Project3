@@ -108,16 +108,22 @@ def done():
     setupHardConstraints()
     window.destroy()  # if pressed first, then ends whole process
 
+#define image
+bg = PhotoImage(file="C:\\Users\\James\\Documents\\AI\\Python_Project3\\AI_Project3KerusCustodio\\images.png")
 
-## this seems to be working
-attributesButton = Button(window, text="Select attributes file", command=chooseFile)
-attributesButton.pack()
-constraintButton = Button(window, text="Select the hard constraints files", command=chooseFile)
-constraintButton.pack()
-preferencesButton = Button(window, text="Select the preferences files", command=chooseFile)
-preferencesButton.pack()
-endButton = Button(window, text="Done", command=done)
-endButton.pack(pady=20)
+#create canvas
+myCanvas = Canvas(window, width=700, height=400)
+myCanvas.pack(fill="both", expand=True)
+
+# this seems to be working
+# attributesButton = Button(window, text="Select attributes file", command=chooseFile)
+# attributesButton.pack()
+# constraintButton = Button(window, text="Select the hard constraints files", command=chooseFile)
+# constraintButton.pack()
+# preferencesButton = Button(window, text="Select the preferences files", command=chooseFile)
+# preferencesButton.pack()
+# endButton = Button(window, text="Done", command=done)
+# endButton.pack(pady=20)
 
 window.mainloop()
 
