@@ -19,9 +19,12 @@ def claspInput():
     # the executable for clasp should be in the same place as this program
     claspExecute = subprocess.run(['clasp'], input=finalString.encode(), stdout=subprocess.PIPE)
     for line in claspExecute.stdout.splitlines():
+        print(line)
         if line.__contains__(b'SATISFIABLE'):
+            print("Returned Satisfiable")
             return 1
         elif line.__contains__(b'UNSATISFIABLE'):
+            print("Returned Unsatisfiable")
             return 0
 
 
