@@ -140,15 +140,19 @@ def done():
 
 
 # define image
-imagePath = os.path.join(ROOT_DIR, 'image.png')  # loads images.png no matter where the project is located
-bg = PhotoImage(file=imagePath)
-
+imagePath1 = os.path.join(ROOT_DIR, 'image.png')  # loads images.png no matter where the project is located
+bg1 = PhotoImage(file=imagePath1)
+# imagePath2 = os.path.join(ROOT_DIR, 'greyimage.png')
+# bg2 = PhotoImage(file=imagePath1)
 # create canvas
 myCanvas = Canvas(window, width=500, height=500)
 myCanvas.pack(fill="both", expand=True)
+# myCanvas2 = Canvas(window, width=250, height=500)
+# myCanvas2.pack(fill="both", expand=True)
 
 # set image in canvas
-myCanvas.create_image(0, 0, image=bg)
+myCanvas.create_image(0, 0, image=bg1)
+
 
 # add a label
 myCanvas.create_text(75, 60, text="Home", font=("Bierstadt", 10), fill="white")
@@ -162,8 +166,8 @@ def selected(event):
     # if clicked.get() == "Select attributes file": popup to submit then execute below code
     Submit = Button(window, text="Submit", command=chooseFile)
     doneButton = Button(window, text="Done", command=done)
-    submitWindow = myCanvas.create_window(350, 130, anchor="center", window=Submit)
-    myCanvas.create_window(350, 350, anchor="center", window=doneButton)
+    myCanvas.create_window(350, 130, anchor="center", window=Submit)
+    myCanvas.create_window(350, 190, anchor="center", window=doneButton)
 
 
 options = [
