@@ -5,7 +5,7 @@ import subprocess
 
 window = Tk()
 window.title = "Enter files"
-window.geometry("700x400")
+window.geometry("475x300")
 window.eval('tk::PlaceWindow . center')
 ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
 claspPath = os.path.join(ROOT_DIR, 'image.png')
@@ -144,14 +144,16 @@ imagePath = os.path.join(ROOT_DIR, 'image.png')  # loads images.png no matter wh
 bg = PhotoImage(file=imagePath)
 
 # create canvas
-myCanvas = Canvas(window, width=700, height=400)
+myCanvas = Canvas(window, width=500, height=500)
 myCanvas.pack(fill="both", expand=True)
 
 # set image in canvas
-myCanvas.create_image(0, 0, image=bg, anchor="nw")
+myCanvas.create_image(0, 0, image=bg)
 
 # add a label
-myCanvas.create_text(100, 20, text="Select an option", font=("Times new roman", 24), fill="white")
+myCanvas.create_text(75, 60, text="Home", font=("Bierstadt", 10), fill="white")
+myCanvas.create_text(75, 100, text="Help", font=("Bierstadt", 10), fill="white")
+myCanvas.create_text(75, 140, text="Exit", font=("Bierstadt", 10), fill="white")
 
 
 # add a drop down 
@@ -160,7 +162,7 @@ def selected(event):
     # if clicked.get() == "Select attributes file": popup to submit then execute below code
     Submit = Button(window, text="Submit", command=chooseFile)
     doneButton = Button(window, text="Done", command=done)
-    submitWindow = myCanvas.create_window(350, 300, anchor="center", window=Submit)
+    submitWindow = myCanvas.create_window(350, 130, anchor="center", window=Submit)
     myCanvas.create_window(350, 350, anchor="center", window=doneButton)
 
 
