@@ -23,6 +23,8 @@ def claspInput():
     claspIn = os.path.join(ROOT_DIR, 'clasp-3.3.2-win64.exe Output.txt')
     print(claspIn)
 
+
+"""
     claspExecute = subprocess.run(claspIn, stdout=subprocess.PIPE, text=True)
     print(claspExecute)
     print("executed")
@@ -34,6 +36,7 @@ def claspInput():
         elif line.__contains__('UNSATISFIABLE'):
             print("Returned Unsatisfiable")
             return 0
+"""
 
 
 #######################################################################################################
@@ -160,7 +163,6 @@ myCanvas.pack(fill="both", expand=True)
 
 # set image in canvas
 myCanvas.create_image(0, 0, image=bg1)
-
 
 # add a label
 myCanvas.create_text(75, 60, text="Home", font=("Bierstadt", 10), fill="white")
