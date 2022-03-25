@@ -8,7 +8,7 @@ window.title = "Enter files"
 window.geometry("700x400")
 window.eval('tk::PlaceWindow . center')
 ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
-claspPath = os.path.join(ROOT_DIR, 'images.png')
+claspPath = os.path.join(ROOT_DIR, 'image.png')
 
 files = []  # Holds the content of opened files
 attributeToNumber = {}  # Dictionary mapping words in atributes file to numbers for CLASP input
@@ -140,7 +140,7 @@ def done():
 
 
 # define image
-imagePath = os.path.join(ROOT_DIR, 'images.png')  # loads images.png no matter where the project is located
+imagePath = os.path.join(ROOT_DIR, 'image.png')  # loads images.png no matter where the project is located
 bg = PhotoImage(file=imagePath)
 
 # create canvas
