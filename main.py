@@ -117,7 +117,17 @@ def setupHardConstraints():
         if num == num2:
             finalString += str(newNumbers[num])
     print(finalString)
+"""
+def setupPreferences():
+    # conversion replaces the words in the preference file with their numeric value from attributeToNumber dict
+    preferences = files[2].split()
+    conversion = ' '.join(str(attributeToNumber.get(a, a)) for a in preferences)
+    # print(preferences)
+    # print(conversion)
 
+
+
+"""
 
 def chooseFile():
     Tk().withdraw()  # we don't want a full GUI, so keep the root window from appearing
