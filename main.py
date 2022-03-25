@@ -119,14 +119,26 @@ def setupHardConstraints():
     print(finalString)
 """
 def setupPreferences():
-    # conversion replaces the words in the preference file with their numeric value from attributeToNumber dict
+    # preference replaces the words in the preference file with their numeric value from attributeToNumber dict
     preferences = files[2].split()
     conversion = ' '.join(str(attributeToNumber.get(a, a)) for a in preferences)
     # print(preferences)
     # print(conversion)
 
-
-
+    newNumbers = []
+    lines = 0
+    
+    # can we divide the file using a comma splice
+    # there is one comma splice per line
+    # before the comma is our line after is the numeric
+    preferencesSplit = preferences.split(", ")
+    lines = int(len(preferencesSplit)) - 1
+    
+    for b in preferencesSplit:
+    
+        preferenceLine = preferencesSplit.split()
+        print(preferenceLine)
+        
 """
 
 def chooseFile():
