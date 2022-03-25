@@ -8,22 +8,30 @@ window.title = "Enter files"
 window.geometry("700x400")
 window.eval('tk::PlaceWindow . center')
 ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
-claspPath = os.path.join(ROOT_DIR, 'image.png')
+claspPath = os.path.join(ROOT_DIR, 'clasp-3.3.2-win64.exe')
 
 files = []  # Holds the content of opened files
 attributeToNumber = {}  # Dictionary mapping words in atributes file to numbers for CLASP input
 finalString = ""  # after all manipulations, this the final string we will input into clasp
 
+
 # CODED THIS ON MY MACBOOK, DON'T KNOW IF IT WORKS, BASED ON RESEARCH THIS SHOULD WORK, NEEDS TESTING - David
 def claspInput():
     # the executable for clasp should be in the same place as this program
-    claspExecute = subprocess.run(['clasp'], input=finalString.encode(), stdout=subprocess.PIPE)
+    with open("Output.txt", "w") as text_file:
+        print(finalString, file=text_file)
+    claspIn = os.path.join(ROOT_DIR, 'clasp-3.3.2-win64.exe Output.txt')
+    print(claspIn)
+
+    claspExecute = subprocess.run(claspIn, stdout=subprocess.PIPE, text=True)
+    print(claspExecute)
+    print("executed")
     for line in claspExecute.stdout.splitlines():
         print(line)
-        if line.__contains__(b'SATISFIABLE'):
+        if line.__contains__('SATISFIABLE'):
             print("Returned Satisfiable")
             return 1
-        elif line.__contains__(b'UNSATISFIABLE'):
+        elif line.__contains__('UNSATISFIABLE'):
             print("Returned Unsatisfiable")
             return 0
 
@@ -124,7 +132,7 @@ def done():
     # function to do calculations should go here
     setUpAttribute()
     setupHardConstraints()
-    # claspInput()
+    claspInput()
     window.destroy()  # if pressed first, then ends whole process
 
 
