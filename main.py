@@ -69,6 +69,7 @@ def setupHardConstraints():
     # print(conversionSplit)
     # print(newNumbers)
 
+    """
     # this gets the unique attributes for the first line of CLASP CNF input
     uniqueAttributes = -1  # this method counts 0 as a unique value, so we account for that by starting at -1
     uniqueList = []
@@ -77,9 +78,12 @@ def setupHardConstraints():
         if newNumbers[a] != '\n' and abs(int(newNumbers[a])) not in uniqueList:
             uniqueAttributes += 1
             uniqueList.append(abs(int(newNumbers[a])))
+    """
+
+    booleanVars = len(attributeToNumber) / 2
 
     # final string is going to be our input for CLASP
-    finalString = "p cnf " + str(uniqueAttributes) + " " + str(lines) + "\n"
+    finalString = "p cnf " + str(int(booleanVars)) + " " + str(lines) + "\n"
     num2 = int(len(newNumbers))
     for num in range(num2):
         if num < num2 and [num + 1] == '\n':
@@ -91,7 +95,7 @@ def setupHardConstraints():
         finalString += str(newNumbers[num]) + " "
         if num == num2:
             finalString += str(newNumbers[num])
-    # print(finalString)
+    #print(finalString)
     return finalString
 
 
@@ -179,7 +183,6 @@ def done():
     # print("First file: " + str(files[0]) + " Second File: " + str(files[1]) + " Third File: " + str(files[2]))
     # function to do calculations should go here
     setUpAttribute()
-    setupHardConstraints()
     claspInput()
     window.destroy()  # if pressed first, then ends whole process
 
