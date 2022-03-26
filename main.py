@@ -12,31 +12,6 @@ claspPath = os.path.join(ROOT_DIR, 'clasp-3.3.2-win64.exe')
 
 files = []  # Holds the content of opened files
 attributeToNumber = {}  # Dictionary mapping words in atributes file to numbers for CLASP input
-finalString = ""  # after all manipulations, this the final string we will input into clasp
-
-
-# CODED THIS ON MY MACBOOK, DON'T KNOW IF IT WORKS, BASED ON RESEARCH THIS SHOULD WORK, NEEDS TESTING - David
-def claspInput():
-    # the executable for clasp should be in the same place as this program
-    with open("Output.txt", "w") as text_file:
-        print(finalString, file=text_file)
-    claspIn = os.path.join(ROOT_DIR, 'clasp-3.3.2-win64.exe Output.txt')
-    print(claspIn)
-
-
-"""
-    claspExecute = subprocess.run(claspIn, stdout=subprocess.PIPE, text=True)
-    print(claspExecute)
-    print("executed")
-    for line in claspExecute.stdout.splitlines():
-        print(line)
-        if line.__contains__('SATISFIABLE'):
-            print("Returned Satisfiable")
-            return 1
-        elif line.__contains__('UNSATISFIABLE'):
-            print("Returned Unsatisfiable")
-            return 0
-"""
 
 
 #######################################################################################################
@@ -47,7 +22,7 @@ def setUpAttribute():
     for a in range(1, totalNumberOfAttributes + 1):
         # assigning numbers to attributes. Either x or -x
         attributeToNumber[attributes[(a * 3 - 2)]] = a
-        attributeToNumber[attributes[(a * 3 - 1)]] = -1 * (a)
+        attributeToNumber[attributes[(a * 3 - 1)]] = -1 * a
         # print(attributes[(a*3-2)])
         # print(attributes[(a*3-1)])
     # print(attributeToNumber)
@@ -116,7 +91,34 @@ def setupHardConstraints():
         finalString += str(newNumbers[num]) + " "
         if num == num2:
             finalString += str(newNumbers[num])
-    print(finalString)
+    # print(finalString)
+    return finalString
+
+
+def claspInput():
+    cmdInput = setupHardConstraints()
+    # the executable for clasp should be in the same place as this program
+    with open("Output.txt", "w") as text_file:
+        text_file.write(str(cmdInput))
+    claspIn = os.path.join(ROOT_DIR, 'clasp-3.3.2-win64.exe Output.txt')
+    # print(claspIn)
+
+    claspExecute = subprocess.run(claspIn, stdout=subprocess.PIPE, text=True)
+    # print(claspExecute.stdout)
+    # print("executed")
+    for line in claspExecute.stdout.splitlines():
+        # print(line)
+        if line.__contains__('SATISFIABLE'):
+            print("Returned Satisfiable")
+            return 1
+        elif line.__contains__('UNSATISFIABLE'):
+            print("Returned Unsatisfiable")
+            return 0
+        elif line.__contains__('UNKNOWN'):
+            print("Returned Unknown")
+            return 2
+
+
 """
 def setupPreferences():
 # WE NEED A WAY TO KNOW WHICH PREFERENCE WE ARE WORKING WITH
@@ -160,6 +162,7 @@ def outputQualitativeLogic():
 # cake BT ice-cream IF soup
         
 """
+
 
 def chooseFile():
     Tk().withdraw()  # we don't want a full GUI, so keep the root window from appearing
