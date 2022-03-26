@@ -123,33 +123,31 @@ def claspInput():
             return 2
 
 
-"""
+
 def setupPreferences():
 # WE NEED A WAY TO KNOW WHICH PREFERENCE WE ARE WORKING WITH
 # EACH BUTTON IS LINKED TO A CERTAIN INPUT FILE FOR THIS
 
     # preference replaces the words in the preference file with their numeric value from attributeToNumber dict
     preferences = files[2].split()
-    conversion = ' '.join(str(attributeToNumber.get(a, a)) for a in preferences)
-    # print(preferences)
-    # print(conversion)
+    #conversion = ' '.join(str(attributeToNumber.get(a, a)) for a in preferences)
+    preferenceObjects = str(files[2]).splitlines()
+    
 
-    newNumbers = []
-    lines = 0
+    lines = int(len(preferenceObjects))
+    completePreferences = []
     
-    # can we divide the file using a comma splice
-    # there is one comma splice per line
-    # before the comma is our line after is the numeric
-    preferencesSplit = preferences.split(", ")
-    lines = int(len(preferencesSplit)) - 1
     
-    for b in preferencesSplit:
-    
-        preferenceLine = preferencesSplit.split()
-        print(preferenceLine)
+    for line in preferenceObjects:
+        words = line.split()
+
+        preferenceconversion = ' '.join(str(attributeToNumber.get(a, a)) for a in words)
+        completePreferences.append(preferenceconversion)
+        print(preferenceconversion)
         
         
         
+"""       
 def outputPenaltyLogic():
 # fish AND wine     10
 # wine OR cake      6
@@ -184,6 +182,7 @@ def done():
     # function to do calculations should go here
     setUpAttribute()
     claspInput()
+    setupPreferences()
     window.destroy()  # if pressed first, then ends whole process
 
 
