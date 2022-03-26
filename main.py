@@ -119,6 +119,9 @@ def setupHardConstraints():
     print(finalString)
 """
 def setupPreferences():
+# WE NEED A WAY TO KNOW WHICH PREFERENCE WE ARE WORKING WITH
+# EACH BUTTON IS LINKED TO A CERTAIN INPUT FILE FOR THIS
+
     # preference replaces the words in the preference file with their numeric value from attributeToNumber dict
     preferences = files[2].split()
     conversion = ' '.join(str(attributeToNumber.get(a, a)) for a in preferences)
@@ -138,6 +141,23 @@ def setupPreferences():
     
         preferenceLine = preferencesSplit.split()
         print(preferenceLine)
+        
+        
+        
+def outputPenaltyLogic():
+# fish AND wine     10
+# wine OR cake      6
+# beer AND beer OR beef AND NOT soup    7
+
+def outputPossibilisticLogic():
+# fish AND WINE     0.8
+# wine OR cake      0.5
+# beer AND beer OR beef AND NOT soup    0.6
+
+def outputQualitativeLogic():        
+# fish BT beef IF
+# wine BT beer IF fish
+# cake BT ice-cream IF soup
         
 """
 
