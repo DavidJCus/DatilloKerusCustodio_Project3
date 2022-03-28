@@ -12,7 +12,7 @@ claspPath = os.path.join(ROOT_DIR, 'clasp-3.3.2-win64.exe')
 
 files = []  # Holds the content of opened files
 attributeToNumber = {}  # Dictionary mapping words in atributes file to numbers for CLASP input
-
+feasibleObjects = []
 
 #######################################################################################################
 def setUpAttribute():
@@ -136,14 +136,32 @@ def setupPreferences():
 
     lines = int(len(preferenceObjects))
     completePreferences = []
-    
+    # each index in array holds the clasp code per line in preference file input
+    # at least that is current goal
     
     for line in preferenceObjects:
         words = line.split()
 
         preferenceconversion = ' '.join(str(attributeToNumber.get(a, a)) for a in words)
+        tempTest = preferenceconversion.split()
+        #print("before")
+        print(tempTest)
+        for pos in range(len(tempTest)):       
+            if tempTest[pos] == 'NOT':
+                # if there's a NOT, multiplies the next element by -1
+                tempTest[pos + 1] = -1 * int(tempTest[pos + 1])
+                continue
+            if tempTest[pos] == 'OR':
+                # if there's an OR, does nothing and just skips
+                continue
+            if tempTest[pos] == 'AND':
+                # if there's an AND, we must start a new line in clasp
+                # not sure how yet
+                continue
+        #print("after")
+        #print(tempTest)
         completePreferences.append(preferenceconversion)
-        print(preferenceconversion)
+
         
         
         
