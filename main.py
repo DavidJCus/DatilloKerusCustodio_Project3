@@ -9,6 +9,8 @@ window.geometry("475x300")
 window.eval('tk::PlaceWindow . center')
 ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
 claspPath = os.path.join(ROOT_DIR, 'clasp-3.3.2-win64.exe')
+completePreferences = []
+penaltyAmount = []
 
 files = []  # Holds the content of opened files
 attributeToNumber = {}  # Dictionary mapping words in atributes file to numbers for CLASP input
@@ -133,8 +135,7 @@ def setupPreferences():
     #preferences = files[2].split()
     #conversion = ' '.join(str(attributeToNumber.get(a, a)) for a in preferences)
     preferenceObjects = str(files[2]).splitlines()
-    completePreferences = []
-    penaltyAmount = []
+   
     # each index in array holds the clasp code per line in preference file input
     # at least that is current goal
     
@@ -178,7 +179,7 @@ def setupPreferences():
             else:
                 cnfString += str(chunk) + ' '
         cnfString = cnfString + '0'
-        print(cnfString)
+        # print(cnfString)
         # add complete clasp string to completePreferences
         completePreferences.append(cnfString)
     # print(completePreferences) 
@@ -193,35 +194,45 @@ def runningPreferences():
         totalPenalty[object] = 0
     #print(totalPenalty)
 
-    # for clasp input in completePreferences:
-    # get
+    for claspInput in completePreferences:
+        preferenceObjects = []
+        cmdInput = claspInput
+        # print(cmdInput)
+        with open("Output.txt", "w") as text_file:
+            text_file.write(str(cmdInput)) 
+        claspIn = os.path.join(ROOT_DIR, 'clasp-3.3.2-win64.exe -n 0 Output.txt')
+        # print(claspIn)
+        claspExecute = subprocess.run(claspIn, stdout=subprocess.PIPE, text=True)
+        for line in claspExecute.stdout.splitlines():
+            # print(line)
+            if line.startswith('v'):
+                preferenceObjects.append(line)
+            """
+            if completePreferences[claspInput] in hcFeasibleObjects:
+                totalPenalty[completePreferences[claspInput]] += penaltyAmount[claspInput] 
+            """
+        # print(preferenceObjects)
+
+
+
+
+    """       
+    def outputPenaltyLogic():
+    # fish AND wine     10
+    # wine OR cake      6
+    # beer AND beer OR beef AND NOT soup    7
+
+    def outputPossibilisticLogic():
+    # fish AND wine     0.8
+    # wine OR cake      0.5
+    # beer AND beer OR beef AND NOT soup    0.6
+
+    def outputQualitativeLogic():        
+    # fish BT beef IF
+    # wine BT beer IF fish
+    # cake BT ice-cream IF soup
+        
     """
-    cmdInput = setupHardConstraints()
-    # the executable for clasp should be in the same place as this program
-    with open("Output.txt", "w") as text_file:
-        text_file.write(str(cmdInput))
-    claspIn = os.path.join(ROOT_DIR, 'clasp-3.3.2-win64.exe -n 0 Output.txt')
-    # print(claspIn)
-    claspExecute = subprocess.run(claspIn, stdout=subprocess.PIPE, text=True)
-    # print(claspExecute.stdout)"""    
-        
-"""       
-def outputPenaltyLogic():
-# fish AND wine     10
-# wine OR cake      6
-# beer AND beer OR beef AND NOT soup    7
-
-def outputPossibilisticLogic():
-# fish AND wine     0.8
-# wine OR cake      0.5
-# beer AND beer OR beef AND NOT soup    0.6
-
-def outputQualitativeLogic():        
-# fish BT beef IF
-# wine BT beer IF fish
-# cake BT ice-cream IF soup
-        
-"""
 
 #######################################################################################################
 # FRONT END #
