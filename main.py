@@ -12,7 +12,7 @@ claspPath = os.path.join(ROOT_DIR, 'clasp-3.3.2-win64.exe')
 
 files = []  # Holds the content of opened files
 attributeToNumber = {}  # Dictionary mapping words in atributes file to numbers for CLASP input
-feasibleObjects = []
+hcFeasibleObjects = []
 
 #######################################################################################################
 def setUpAttribute():
@@ -98,15 +98,14 @@ def setupHardConstraints():
     #print(finalString)
     return finalString
 
-
+#######################################################################################################
 def claspInput():
     cmdInput = setupHardConstraints()
     # the executable for clasp should be in the same place as this program
     with open("Output.txt", "w") as text_file:
         text_file.write(str(cmdInput))
-    claspIn = os.path.join(ROOT_DIR, 'clasp-3.3.2-win64.exe Output.txt')
+    claspIn = os.path.join(ROOT_DIR, 'clasp-3.3.2-win64.exe -n 0 Output.txt')
     # print(claspIn)
-
     claspExecute = subprocess.run(claspIn, stdout=subprocess.PIPE, text=True)
     # print(claspExecute.stdout)
     # print("executed")
@@ -114,16 +113,18 @@ def claspInput():
         # print(line)
         if line.__contains__('SATISFIABLE'):
             print("Returned Satisfiable")
-            return 1
+            # return 1
         elif line.__contains__('UNSATISFIABLE'):
             print("Returned Unsatisfiable")
-            return 0
+            # return 0
         elif line.__contains__('UNKNOWN'):
             print("Returned Unknown")
-            return 2
+            # return 2
+        elif line.startswith('v'):
+            hcFeasibleObjects.append(line)
+    #print(hcFeasibleObjects)
 
-
-
+#######################################################################################################
 def setupPreferences():
 # WE NEED A WAY TO KNOW WHICH PREFERENCE WE ARE WORKING WITH
 # EACH BUTTON IS LINKED TO A CERTAIN INPUT FILE FOR THIS
@@ -132,37 +133,51 @@ def setupPreferences():
     preferences = files[2].split()
     #conversion = ' '.join(str(attributeToNumber.get(a, a)) for a in preferences)
     preferenceObjects = str(files[2]).splitlines()
-    
-
-    lines = int(len(preferenceObjects))
     completePreferences = []
+    penaltyAmount = []
     # each index in array holds the clasp code per line in preference file input
     # at least that is current goal
     
     for line in preferenceObjects:
         words = line.split()
+        newLines= 1
+
 
         preferenceconversion = ' '.join(str(attributeToNumber.get(a, a)) for a in words)
         tempTest = preferenceconversion.split()
-        #print("before")
-        print(tempTest)
+        # print("before")
+        # print(tempTest)
         for pos in range(len(tempTest)):       
             if tempTest[pos] == 'NOT':
                 # if there's a NOT, multiplies the next element by -1
                 tempTest[pos + 1] = -1 * int(tempTest[pos + 1])
+                tempTest[pos] = ""
                 continue
             if tempTest[pos] == 'OR':
                 # if there's an OR, does nothing and just skips
+                tempTest[pos] = ""
                 continue
             if tempTest[pos] == 'AND':
                 # if there's an AND, we must start a new line in clasp
                 # not sure how yet
+                tempTest[pos] = '0\n'
+                newLines += 1
                 continue
         #print("after")
+        penaltyAmount.append(tempTest[-1])
+        tempTest.pop()
         #print(tempTest)
-        completePreferences.append(preferenceconversion)
-
+        # final string is going to be our input for CLASP
+        booleanVars = len(attributeToNumber) / 2
+        cnfString = "p cnf " + str(int(booleanVars)) + " " + str(newLines) + "\n"
+        cnfString = cnfString + " ".join(str(chunk) for chunk in tempTest)
+        cnfString = cnfString + ' 0'
+        print(cnfString)
         
+        
+
+def runningPreferences():
+    print("hi, will come back soon. On break.")        
         
         
 """       
@@ -183,7 +198,9 @@ def outputQualitativeLogic():
         
 """
 
-
+#######################################################################################################
+# FRONT END #
+#######################################################################################################
 def chooseFile():
     Tk().withdraw()  # we don't want a full GUI, so keep the root window from appearing
     filename = askopenfilename()  # show an "Open" dialog box and return the path to the selected file
@@ -277,12 +294,4 @@ endButton = Button(window, text="Done", command=done)
 endButton.pack(pady=20)
 """
 window.mainloop()
-
-# Start to convert the example attribute file into CNF
-#######################################################################################################
-
-# Start to convert the example constraints file into CNF
-#######################################################################################################
-
-# Start to convert the example preferences file into CNF
 #######################################################################################################
