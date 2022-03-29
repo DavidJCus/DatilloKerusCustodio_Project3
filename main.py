@@ -178,17 +178,32 @@ def setupPreferences():
             else:
                 cnfString += str(chunk) + ' '
         cnfString = cnfString + '0'
-        # print(cnfString)
+        print(cnfString)
         # add complete clasp string to completePreferences
         completePreferences.append(cnfString)
-    #print(completePreferences) 
-    #print(penaltyAmount)
+    # print(completePreferences) 
+    # print(penaltyAmount)
         
         
-
+#######################################################################################################
 def runningPreferences():
-    print("hi, will come back soon. On break.")        
-        
+    # Start dictionary of feasible objects with a start of zero penalty 
+    totalPenalty = {}  
+    for object in hcFeasibleObjects:
+        totalPenalty[object] = 0
+    #print(totalPenalty)
+
+    # for clasp input in completePreferences:
+    # get
+    """
+    cmdInput = setupHardConstraints()
+    # the executable for clasp should be in the same place as this program
+    with open("Output.txt", "w") as text_file:
+        text_file.write(str(cmdInput))
+    claspIn = os.path.join(ROOT_DIR, 'clasp-3.3.2-win64.exe -n 0 Output.txt')
+    # print(claspIn)
+    claspExecute = subprocess.run(claspIn, stdout=subprocess.PIPE, text=True)
+    # print(claspExecute.stdout)"""    
         
 """       
 def outputPenaltyLogic():
@@ -197,7 +212,7 @@ def outputPenaltyLogic():
 # beer AND beer OR beef AND NOT soup    7
 
 def outputPossibilisticLogic():
-# fish AND WINE     0.8
+# fish AND wine     0.8
 # wine OR cake      0.5
 # beer AND beer OR beef AND NOT soup    0.6
 
@@ -228,6 +243,7 @@ def done():
     setUpAttribute()
     claspInput()
     setupPreferences()
+    runningPreferences()
     window.destroy()  # if pressed first, then ends whole process
 
 
