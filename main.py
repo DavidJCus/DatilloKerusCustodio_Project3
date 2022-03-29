@@ -151,11 +151,13 @@ def setupPreferences():
             if tempTest[pos] == 'NOT':
                 # if there's a NOT, multiplies the next element by -1
                 tempTest[pos + 1] = -1 * int(tempTest[pos + 1])
-                tempTest[pos] = ""
+                tempTest[pos] = " "
+                #ctempTest.pop(pos)
                 continue
             if tempTest[pos] == 'OR':
                 # if there's an OR, does nothing and just skips
-                tempTest[pos] = ""
+                tempTest[pos] = " "
+                # tempTest.pop(pos)
                 continue
             if tempTest[pos] == 'AND':
                 # if there's an AND, we must start a new line in clasp
@@ -170,8 +172,14 @@ def setupPreferences():
         # final string is going to be our input for CLASP
         booleanVars = len(attributeToNumber) / 2
         cnfString = "p cnf " + str(int(booleanVars)) + " " + str(newLines) + "\n"
-        cnfString = cnfString + " ".join(str(chunk) for chunk in tempTest)
-        cnfString = cnfString + ' 0'
+        for chunk in tempTest: 
+            if chunk == "0\n":
+                cnfString += str(chunk)
+            elif chunk == " ":
+                continue
+            else:
+                cnfString += str(chunk) + ' '
+        cnfString = cnfString + '0'
         print(cnfString)
         
         
