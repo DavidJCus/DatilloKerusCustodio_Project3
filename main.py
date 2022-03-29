@@ -166,7 +166,7 @@ def setupPreferences():
                 newLines += 1
                 continue
         # add penalty to list penalty amount
-        penaltyAmount.append(tempTest.pop())
+        penaltyAmount.append(int(tempTest.pop()))
         #print(tempTest)
         # cnfstring is going to be our input for CLASP
         booleanVars = len(attributeToNumber) / 2
@@ -194,8 +194,9 @@ def runningPreferences():
         totalPenalty[object] = 0
     #print(totalPenalty)
 
+    counter = 0
     for claspInput in completePreferences:
-        preferenceObjects = []
+        
         cmdInput = claspInput
         # print(cmdInput)
         with open("Output.txt", "w") as text_file:
@@ -206,12 +207,12 @@ def runningPreferences():
         for line in claspExecute.stdout.splitlines():
             # print(line)
             if line.startswith('v'):
-                preferenceObjects.append(line)
-            """
-            if completePreferences[claspInput] in hcFeasibleObjects:
-                totalPenalty[completePreferences[claspInput]] += penaltyAmount[claspInput] 
-            """
-        # print(preferenceObjects)
+                
+                if line in hcFeasibleObjects:
+                    totalPenalty[line] += penaltyAmount[counter]
+        counter += 1
+        
+    #print(totalPenalty)
 
 
 
