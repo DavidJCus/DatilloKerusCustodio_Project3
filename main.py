@@ -130,7 +130,7 @@ def setupPreferences():
 # EACH BUTTON IS LINKED TO A CERTAIN INPUT FILE FOR THIS
 
     # preference replaces the words in the preference file with their numeric value from attributeToNumber dict
-    preferences = files[2].split()
+    #preferences = files[2].split()
     #conversion = ' '.join(str(attributeToNumber.get(a, a)) for a in preferences)
     preferenceObjects = str(files[2]).splitlines()
     completePreferences = []
@@ -140,8 +140,7 @@ def setupPreferences():
     
     for line in preferenceObjects:
         words = line.split()
-        newLines= 1
-
+        newLines = 1
 
         preferenceconversion = ' '.join(str(attributeToNumber.get(a, a)) for a in words)
         tempTest = preferenceconversion.split()
@@ -165,11 +164,10 @@ def setupPreferences():
                 tempTest[pos] = '0\n'
                 newLines += 1
                 continue
-        #print("after")
-        penaltyAmount.append(tempTest[-1])
-        tempTest.pop()
+        # add penalty to list penalty amount
+        penaltyAmount.append(tempTest.pop())
         #print(tempTest)
-        # final string is going to be our input for CLASP
+        # cnfstring is going to be our input for CLASP
         booleanVars = len(attributeToNumber) / 2
         cnfString = "p cnf " + str(int(booleanVars)) + " " + str(newLines) + "\n"
         for chunk in tempTest: 
@@ -180,7 +178,11 @@ def setupPreferences():
             else:
                 cnfString += str(chunk) + ' '
         cnfString = cnfString + '0'
-        print(cnfString)
+        # print(cnfString)
+        # add complete clasp string to completePreferences
+        completePreferences.append(cnfString)
+    #print(completePreferences) 
+    #print(penaltyAmount)
         
         
 
