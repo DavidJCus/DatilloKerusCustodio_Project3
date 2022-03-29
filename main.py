@@ -105,6 +105,7 @@ def setupHardConstraints():
 
 #######################################################################################################
 def claspInput():
+    # TODO: add mac support here instead of new functions
     cmdInput = setupHardConstraints()
     # the executable for clasp should be in the same place as this program
     with open("Output.txt", "w") as text_file:
@@ -148,6 +149,7 @@ def macClaspInput():
             print("Returned Unknown")
         elif line.startswith('v'):
             hcFeasibleObjects.append(line)
+
 
 #######################################################################################################
 def setupPreferences():
@@ -237,8 +239,9 @@ def runningPreferences():
 
     # print(totalPenalty)
 
+
 def macRunningPreferences():
-        # Start dictionary of feasible objects with a start of zero penalty
+    # Start dictionary of feasible objects with a start of zero penalty
     totalPenalty = {}
     for object in hcFeasibleObjects:
         totalPenalty[object] = 0
