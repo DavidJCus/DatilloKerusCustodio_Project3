@@ -2,19 +2,21 @@ from tkinter import *
 from tkinter.filedialog import askopenfilename
 import os
 import subprocess
+import platform
 
 window = Tk()
 window.title = "Enter files"
 window.geometry("475x300")
 window.eval('tk::PlaceWindow . center')
 ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
-claspPath = os.path.join(ROOT_DIR, 'clasp-3.3.2-win64.exe')
+# claspMacPath = os.path.join(ROOT_DIR, 'clasp-3.3.2-x86_64-macosx')
 completePreferences = []
 penaltyAmount = []
 
 files = []  # Holds the content of opened files
 attributeToNumber = {}  # Dictionary mapping words in atributes file to numbers for CLASP input
 hcFeasibleObjects = []
+
 
 #######################################################################################################
 def setUpAttribute():
@@ -97,8 +99,9 @@ def setupHardConstraints():
         finalString += str(newNumbers[num]) + " "
         if num == num2:
             finalString += str(newNumbers[num])
-    #print(finalString)
+    # print(finalString)
     return finalString
+
 
 #######################################################################################################
 def claspInput():
@@ -124,21 +127,41 @@ def claspInput():
             # return 2
         elif line.startswith('v'):
             hcFeasibleObjects.append(line)
-    #print(hcFeasibleObjects)
+    # print(hcFeasibleObjects)
+
+
+def macClaspInput():
+    cmdInput = setupHardConstraints()
+    # the executable for clasp should be in the same place as this program
+    with open("Output.txt", "w") as text_file:
+        text_file.write(str(cmdInput))
+    change = "cd " + ROOT_DIR
+    claspIn = change + "; ./clasp-3.3.2-x86_64-macosx -n 0 Output.txt"
+    claspExecute = subprocess.run(claspIn, stdout=subprocess.PIPE, shell=True, text=True)
+    for line in claspExecute.stdout.splitlines():
+        # print(line)
+        if line.__contains__('SATISFIABLE'):
+            print("Returned Satisfiable")
+        elif line.__contains__('UNSATISFIABLE'):
+            print("Returned Unsatisfiable")
+        elif line.__contains__('UNKNOWN'):
+            print("Returned Unknown")
+        elif line.startswith('v'):
+            hcFeasibleObjects.append(line)
 
 #######################################################################################################
 def setupPreferences():
-# WE NEED A WAY TO KNOW WHICH PREFERENCE WE ARE WORKING WITH
-# EACH BUTTON IS LINKED TO A CERTAIN INPUT FILE FOR THIS
+    # WE NEED A WAY TO KNOW WHICH PREFERENCE WE ARE WORKING WITH
+    # EACH BUTTON IS LINKED TO A CERTAIN INPUT FILE FOR THIS
 
     # preference replaces the words in the preference file with their numeric value from attributeToNumber dict
-    #preferences = files[2].split()
-    #conversion = ' '.join(str(attributeToNumber.get(a, a)) for a in preferences)
+    # preferences = files[2].split()
+    # conversion = ' '.join(str(attributeToNumber.get(a, a)) for a in preferences)
     preferenceObjects = str(files[2]).splitlines()
-   
+
     # each index in array holds the clasp code per line in preference file input
     # at least that is current goal
-    
+
     for line in preferenceObjects:
         words = line.split()
         newLines = 1
@@ -147,12 +170,12 @@ def setupPreferences():
         tempTest = preferenceconversion.split()
         # print("before")
         # print(tempTest)
-        for pos in range(len(tempTest)):       
+        for pos in range(len(tempTest)):
             if tempTest[pos] == 'NOT':
                 # if there's a NOT, multiplies the next element by -1
                 tempTest[pos + 1] = -1 * int(tempTest[pos + 1])
                 tempTest[pos] = " "
-                #ctempTest.pop(pos)
+                # ctempTest.pop(pos)
                 continue
             if tempTest[pos] == 'OR':
                 # if there's an OR, does nothing and just skips
@@ -167,11 +190,11 @@ def setupPreferences():
                 continue
         # add penalty to list penalty amount
         penaltyAmount.append(int(tempTest.pop()))
-        #print(tempTest)
+        # print(tempTest)
         # cnfstring is going to be our input for CLASP
         booleanVars = len(attributeToNumber) / 2
         cnfString = "p cnf " + str(int(booleanVars)) + " " + str(newLines) + "\n"
-        for chunk in tempTest: 
+        for chunk in tempTest:
             if chunk == "0\n":
                 cnfString += str(chunk)
             elif chunk == " ":
@@ -184,39 +207,59 @@ def setupPreferences():
         completePreferences.append(cnfString)
     # print(completePreferences) 
     # print(penaltyAmount)
-        
-        
+
+
 #######################################################################################################
 def runningPreferences():
     # Start dictionary of feasible objects with a start of zero penalty 
-    totalPenalty = {}  
+    totalPenalty = {}
     for object in hcFeasibleObjects:
         totalPenalty[object] = 0
-    #print(totalPenalty)
+    # print(totalPenalty)
 
     counter = 0
     for claspInput in completePreferences:
-        
+
         cmdInput = claspInput
         # print(cmdInput)
         with open("Output.txt", "w") as text_file:
-            text_file.write(str(cmdInput)) 
+            text_file.write(str(cmdInput))
         claspIn = os.path.join(ROOT_DIR, 'clasp-3.3.2-win64.exe -n 0 Output.txt')
         # print(claspIn)
         claspExecute = subprocess.run(claspIn, stdout=subprocess.PIPE, text=True)
         for line in claspExecute.stdout.splitlines():
             # print(line)
             if line.startswith('v'):
-                
+
                 if line in hcFeasibleObjects:
                     totalPenalty[line] += penaltyAmount[counter]
         counter += 1
-        
-    #print(totalPenalty)
 
+    # print(totalPenalty)
 
+def macRunningPreferences():
+        # Start dictionary of feasible objects with a start of zero penalty
+    totalPenalty = {}
+    for object in hcFeasibleObjects:
+        totalPenalty[object] = 0
+    # print(totalPenalty)
 
+    counter = 0
+    for claspInput in completePreferences:
 
+        cmdInput = claspInput
+        with open("Output.txt", "w") as text_file:
+            text_file.write(str(cmdInput))
+        change = "cd " + ROOT_DIR
+        claspIn = change + "; ./clasp-3.3.2-x86_64-macosx -n 0 Output.txt"
+        claspExecute = subprocess.run(claspIn, stdout=subprocess.PIPE, shell=True, text=True)
+        for line in claspExecute.stdout.splitlines():
+            if line.startswith('v'):
+                if line in hcFeasibleObjects:
+                    totalPenalty[line] += penaltyAmount[counter]
+        counter += 1
+
+    # print(totalPenalty)
     """       
     def outputPenaltyLogic():
     # fish AND wine     10
@@ -235,6 +278,7 @@ def runningPreferences():
         
     """
 
+
 #######################################################################################################
 # FRONT END #
 #######################################################################################################
@@ -249,13 +293,18 @@ def chooseFile():
 
 
 def done():
-    # print("You pressed done, here are the results")
-    # print("First file: " + str(files[0]) + " Second File: " + str(files[1]) + " Third File: " + str(files[2]))
-    # function to do calculations should go here
+    operatingSys = platform.system()
     setUpAttribute()
-    claspInput()
+    if operatingSys == 'Darwin':
+        macClaspInput()
+    else:
+        claspInput()
     setupPreferences()
-    runningPreferences()
+
+    if operatingSys == 'Darwin':
+        macRunningPreferences()
+    else:
+        runningPreferences()
     window.destroy()  # if pressed first, then ends whole process
 
 
