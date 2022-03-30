@@ -153,6 +153,7 @@ def macClaspInput():
 
 
 #######################################################################################################
+## PENALTY LOGIC ##
 def setupPreferences():
     # WE NEED A WAY TO KNOW WHICH PREFERENCE WE ARE WORKING WITH
     # EACH BUTTON IS LINKED TO A CERTAIN INPUT FILE FOR THIS
@@ -211,6 +212,87 @@ def setupPreferences():
     # print(completePreferences) 
     # print(penaltyAmount)
 
+def runningPreferences():
+    # Start dictionary of feasible objects with a start of zero penalty 
+    totalPenalty = {}
+    for object in hcFeasibleObjects:
+        totalPenalty[object] = 0
+    # print(totalPenalty)
+
+    counter = 0
+    for claspInput in completePreferences:
+
+        cmdInput = claspInput
+        # print(cmdInput)
+        with open("Output.txt", "w") as text_file:
+            text_file.write(str(cmdInput))
+        claspIn = os.path.join(ROOT_DIR, 'clasp-3.3.2-win64.exe -n 0 Output.txt')
+        # print(claspIn)
+        claspExecute = subprocess.run(claspIn, stdout=subprocess.PIPE, text=True)
+        for line in claspExecute.stdout.splitlines():
+            # print(line)
+            if line.startswith('v'):
+                # checks if preference objects are feasible
+                if line in hcFeasibleObjects:
+                    totalPenalty[line] += penaltyAmount[counter]
+        counter += 1
+
+    #print(totalPenalty)
+    sortTotalPenalty = sorted(totalPenalty.items(), key=lambda x: x[1])
+    # list of ordered objects from least penalty to most
+    # this will get us the optimal object
+    
+    #print(sortTotalPenalty)
+    omniOptimal =[]
+
+    for i in sortTotalPenalty:
+        #print(i[0], i[1])
+        if i[1] == sortTotalPenalty[0][1]:
+            omniOptimal.append(i)
+    #print(omniOptimal)
+    for entry in omniOptimal:
+        toConvert = entry[0].split()[1:5]
+        #print(toConvert)
+        # invertedAttributeToNumber = {v: k for k, v in attributeToNumber.items()}
+        invertedAttributeToNumber = dict([(value, key) for key, value in attributeToNumber.items()])
+        #print(invertedAttributeToNumber)
+        convertedOutput = ' '.join(str(invertedAttributeToNumber.get(int(a), a)) for a in toConvert)
+        print(convertedOutput)
+
+        
+def macRunningPreferences():
+    # Start dictionary of feasible objects with a start of zero penalty
+    totalPenalty = {}
+    for object in hcFeasibleObjects:
+        totalPenalty[object] = 0
+    # print(totalPenalty)
+
+    counter = 0
+    for claspInput in completePreferences:
+
+        cmdInput = claspInput
+        with open("Output.txt", "w") as text_file:
+            text_file.write(str(cmdInput))
+        change = "cd " + ROOT_DIR
+        claspIn = change + "; ./clasp-3.3.2-x86_64-macosx -n 0 Output.txt"
+        claspExecute = subprocess.run(claspIn, stdout=subprocess.PIPE, shell=True, text=True)
+        for line in claspExecute.stdout.splitlines():
+            if line.startswith('v'):
+                if line in hcFeasibleObjects:
+                    totalPenalty[line] += penaltyAmount[counter]
+        counter += 1
+
+    #print(totalPenalty)
+    sortTotalPenalty = sorted(totalPenalty.items(), key=lambda x: x[1])
+    # list of ordered objects from least penalty to most
+    # this will get us the optimal object
+    #print(sortTotalPenalty)
+    for i in sortTotalPenalty:
+        print(i[0], i[1])
+    # print(totalPenalty)
+
+#######################################################################################################
+## POSSIBILISTIC LOGIC ##
 def setupPossibilisticPreferences():
     # WE NEED A WAY TO KNOW WHICH PREFERENCE WE ARE WORKING WITH
     # EACH BUTTON IS LINKED TO A CERTAIN INPUT FILE FOR THIS
@@ -270,99 +352,7 @@ def setupPossibilisticPreferences():
     # print(completePreferences) 
     # print(penaltyAmount)
 
-#######################################################################################################
-## PENALTY LOGIC ##
-def runningPreferences():
-    # Start dictionary of feasible objects with a start of zero penalty 
-    totalPenalty = {}
-    for object in hcFeasibleObjects:
-        totalPenalty[object] = 0
-    # print(totalPenalty)
 
-    counter = 0
-    for claspInput in completePreferences:
-
-        cmdInput = claspInput
-        # print(cmdInput)
-        with open("Output.txt", "w") as text_file:
-            text_file.write(str(cmdInput))
-        claspIn = os.path.join(ROOT_DIR, 'clasp-3.3.2-win64.exe -n 0 Output.txt')
-        # print(claspIn)
-        claspExecute = subprocess.run(claspIn, stdout=subprocess.PIPE, text=True)
-        for line in claspExecute.stdout.splitlines():
-            # print(line)
-            if line.startswith('v'):
-                # checks if preference objects are feasible
-                if line in hcFeasibleObjects:
-                    totalPenalty[line] += penaltyAmount[counter]
-        counter += 1
-
-    #print(totalPenalty)
-    sortTotalPenalty = sorted(totalPenalty.items(), key=lambda x: x[1])
-    # list of ordered objects from least penalty to most
-    # this will get us the optimal object
-    #print(sortTotalPenalty)
-    omniOptimal =[]
-
-    for i in sortTotalPenalty:
-        print(i[0], i[1])
-        if i[1] == sortTotalPenalty[0][1]:
-            omniOptimal.append(i)
-    #print(omniOptimal)
-
-
-        
-def macRunningPreferences():
-    # Start dictionary of feasible objects with a start of zero penalty
-    totalPenalty = {}
-    for object in hcFeasibleObjects:
-        totalPenalty[object] = 0
-    # print(totalPenalty)
-
-    counter = 0
-    for claspInput in completePreferences:
-
-        cmdInput = claspInput
-        with open("Output.txt", "w") as text_file:
-            text_file.write(str(cmdInput))
-        change = "cd " + ROOT_DIR
-        claspIn = change + "; ./clasp-3.3.2-x86_64-macosx -n 0 Output.txt"
-        claspExecute = subprocess.run(claspIn, stdout=subprocess.PIPE, shell=True, text=True)
-        for line in claspExecute.stdout.splitlines():
-            if line.startswith('v'):
-                if line in hcFeasibleObjects:
-                    totalPenalty[line] += penaltyAmount[counter]
-        counter += 1
-
-    #print(totalPenalty)
-    sortTotalPenalty = sorted(totalPenalty.items(), key=lambda x: x[1])
-    # list of ordered objects from least penalty to most
-    # this will get us the optimal object
-    #print(sortTotalPenalty)
-    for i in sortTotalPenalty:
-        print(i[0], i[1])
-
-    # print(totalPenalty)
-"""       
-    def outputPenaltyLogic():
-    # fish AND wine     10
-    # wine OR cake      6
-    # beer AND beer OR beef AND NOT soup    7
-
-    def outputPossibilisticLogic():
-    # fish AND wine     0.8
-    # wine OR cake      0.5
-    # beer AND beer OR beef AND NOT soup    0.6
-
-    def outputQualitativeLogic():        
-    # fish BT beef IF
-    # wine BT beer IF fish
-    # cake BT ice-cream IF soup
-        
-"""
-#######################################################################################################
-## POSSIBILISTIC LOGIC ##
-# Tolerance 
 def runningPossibilisticPreferences():
     # Start dictionary of feasible objects with a start of zero penalty 
     totalTolerance = {}
@@ -387,22 +377,33 @@ def runningPossibilisticPreferences():
                 if line in hcFeasibleObjects:
                     if (1 - penaltyAmount[counter]) < totalTolerance[line]:
                       totalTolerance[line] = 1 - penaltyAmount[counter]
-                      print(penaltyAmount[counter])
-                      print(1.00 - penaltyAmount[counter])
+                      #print(penaltyAmount[counter])
+                      #print(1.00 - penaltyAmount[counter])
         counter += 1
 
     #print(totalPenalty)
     sortTotalTolerance = sorted(totalTolerance.items(), key=lambda x: x[1])
     # list of ordered objects from least penalty to most
     # this will get us the optimal object
-    print(sortTotalTolerance)
+    # print(sortTotalTolerance)
     omniOptimal =[]
-    """
-    for i in sortTotalPenalty:
-        print(i[0], i[1])
-        if i[1] == sortTotalPenalty[0][1]:
+    
+    for i in sortTotalTolerance:
+        # print(i[0], i[1])
+        if i[1] == sortTotalTolerance[0][1]:
             omniOptimal.append(i)
-    print(omniOptimal)"""
+    # print(omniOptimal)
+
+    for entry in omniOptimal:
+        toConvert = entry[0].split()[1:5]
+        #print(toConvert)
+        # invertedAttributeToNumber = {v: k for k, v in attributeToNumber.items()}
+        invertedAttributeToNumber = dict([(value, key) for key, value in attributeToNumber.items()])
+        #print(invertedAttributeToNumber)
+        convertedOutput = ' '.join(str(invertedAttributeToNumber.get(int(a), a)) for a in toConvert)
+        print(convertedOutput)
+
+
 
 #######################################################################################################
 # FRONT END #
