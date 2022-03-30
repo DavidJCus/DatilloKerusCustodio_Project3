@@ -242,8 +242,16 @@ def runningPreferences():
     # list of ordered objects from least penalty to most
     # this will get us the optimal object
     #print(sortTotalPenalty)
+    omniOptimal =[]
+
     for i in sortTotalPenalty:
-	    print(i[0], i[1])
+        print(i[0], i[1])
+        if i[1] == sortTotalPenalty[0][1]:
+            omniOptimal.append(i)
+    print(omniOptimal)
+
+
+        
 
 def macRunningPreferences():
     # Start dictionary of feasible objects with a start of zero penalty
