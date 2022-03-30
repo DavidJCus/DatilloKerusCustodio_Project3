@@ -232,13 +232,18 @@ def runningPreferences():
         for line in claspExecute.stdout.splitlines():
             # print(line)
             if line.startswith('v'):
-
+                # checks if preference objects are feasible
                 if line in hcFeasibleObjects:
                     totalPenalty[line] += penaltyAmount[counter]
         counter += 1
 
-    # print(totalPenalty)
-
+    #print(totalPenalty)
+    sortTotalPenalty = sorted(totalPenalty.items(), key=lambda x: x[1])
+    # list of ordered objects from least penalty to most
+    # this will get us the optimal object
+    #print(sortTotalPenalty)
+    for i in sortTotalPenalty:
+	    print(i[0], i[1])
 
 def macRunningPreferences():
     # Start dictionary of feasible objects with a start of zero penalty
@@ -262,8 +267,16 @@ def macRunningPreferences():
                     totalPenalty[line] += penaltyAmount[counter]
         counter += 1
 
+    #print(totalPenalty)
+    sortTotalPenalty = sorted(totalPenalty.items(), key=lambda x: x[1])
+    # list of ordered objects from least penalty to most
+    # this will get us the optimal object
+    #print(sortTotalPenalty)
+    for i in sortTotalPenalty:
+	    print(i[0], i[1])
+
     # print(totalPenalty)
-    """       
+"""       
     def outputPenaltyLogic():
     # fish AND wine     10
     # wine OR cake      6
@@ -279,7 +292,7 @@ def macRunningPreferences():
     # wine BT beer IF fish
     # cake BT ice-cream IF soup
         
-    """
+"""
 
 
 #######################################################################################################
