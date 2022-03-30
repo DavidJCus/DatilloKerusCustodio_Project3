@@ -12,6 +12,7 @@ ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
 # claspMacPath = os.path.join(ROOT_DIR, 'clasp-3.3.2-x86_64-macosx')
 completePreferences = []
 penaltyAmount = []
+preference = 0
 
 files = []  # Holds the content of opened files
 attributeToNumber = {}  # Dictionary mapping words in atributes file to numbers for CLASP input
@@ -339,7 +340,7 @@ def macRunningPreferences():
     # this will get us the optimal object
     #print(sortTotalPenalty)
     for i in sortTotalPenalty:
-	    print(i[0], i[1])
+        print(i[0], i[1])
 
     # print(totalPenalty)
 """       
@@ -415,6 +416,13 @@ def chooseFile():
     # print(lines)
     files.append(str(lines))
 
+def preferenceChoice(choice):
+    if choice == 1:
+         return 1
+    if choice == 2:
+        return  2
+    if choice == 3:
+        return 3
 
 def done():
     operatingSys = platform.system()
@@ -460,26 +468,26 @@ myCanvas.pack(fill="both", expand=True)
 myCanvas.create_image(0, 0, image=bg1)
 
 # add a label
-myCanvas.create_text(75, 60, text="Home", font=("Bierstadt", 10), fill="white")
-myCanvas.create_text(75, 100, text="Help", font=("Bierstadt", 10), fill="white")
-myCanvas.create_text(75, 140, text="Exit", font=("Bierstadt", 10), fill="white")
+myCanvas.create_text(100, 150, text="Choose your item", font=("Bierstadt", 10), fill="white")
+myCanvas.create_text(100, 60, text="Choose your preference logic", font=("Bierstadt", 10), fill="white")
+# myCanvas.create_text(75, 140, text="Exit", font=("Bierstadt", 10), fill="white")
 
 
 # add a drop down 
 
 def selected(event):
     # if clicked.get() == "Select attributes file": popup to submit then execute below code
-    Submit = Button(window, text="Submit", command=chooseFile)
+    Browse = Button(window, text="Browse", command=chooseFile)
     doneButton = Button(window, text="Done", command=done)
-    myCanvas.create_window(350, 130, anchor="center", window=Submit)
-    myCanvas.create_window(350, 190, anchor="center", window=doneButton)
+    myCanvas.create_window(100, 200, anchor="center", window=Browse)
+    myCanvas.create_window(250, 250, anchor="center", window=doneButton)
 
 
 options = [
     "Default",
-    "Select attributes file",
-    "Select the hard constraints files",
-    "Select the preferences files"
+    "Attributes File",
+    "Hard Constraints File",
+    "Preference File"
 ]
 # take in selected val
 clicked = StringVar()
@@ -494,7 +502,7 @@ ddl = OptionMenu(
     command=selected
 )
 # putting a window on a window
-ddlWindow = myCanvas.create_window(350, 100, anchor="center", window=ddl)
+ddlWindow = myCanvas.create_window(100, 170, anchor="center", window=ddl)
 """
 # this seems to be working
 attributesButton = Button(window, text="Select attributes file", command=chooseFile)
