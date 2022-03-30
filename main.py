@@ -210,8 +210,67 @@ def setupPreferences():
     # print(completePreferences) 
     # print(penaltyAmount)
 
+def setupPossibilisticPreferences():
+    # WE NEED A WAY TO KNOW WHICH PREFERENCE WE ARE WORKING WITH
+    # EACH BUTTON IS LINKED TO A CERTAIN INPUT FILE FOR THIS
+
+    # preference replaces the words in the preference file with their numeric value from attributeToNumber dict
+    # preferences = files[2].split()
+    # conversion = ' '.join(str(attributeToNumber.get(a, a)) for a in preferences)
+    preferenceObjects = str(files[2]).splitlines()
+
+    # each index in array holds the clasp code per line in preference file input
+    # at least that is current goal
+
+    for line in preferenceObjects:
+        words = line.split()
+        newLines = 1
+
+        preferenceconversion = ' '.join(str(attributeToNumber.get(a, a)) for a in words)
+        tempTest = preferenceconversion.split()
+        # print("before")
+        # print(tempTest)
+        for pos in range(len(tempTest)):
+            if tempTest[pos] == 'NOT':
+                # if there's a NOT, multiplies the next element by -1
+                tempTest[pos + 1] = -1 * int(tempTest[pos + 1])
+                tempTest[pos] = " "
+                # ctempTest.pop(pos)
+                continue
+            if tempTest[pos] == 'OR':
+                # if there's an OR, does nothing and just skips
+                tempTest[pos] = " "
+                # tempTest.pop(pos)
+                continue
+            if tempTest[pos] == 'AND':
+                # if there's an AND, we must start a new line in clasp
+                # not sure how yet
+                tempTest[pos] = '0\n'
+                newLines += 1
+                continue
+        # add penalty to list penalty amount
+        penaltyAmount.append(float(tempTest.pop()))
+        #print(penaltyAmount)
+        # print(tempTest)
+        # cnfstring is going to be our input for CLASP
+        booleanVars = len(attributeToNumber) / 2
+        cnfString = "p cnf " + str(int(booleanVars)) + " " + str(newLines) + "\n"
+        for chunk in tempTest:
+            if chunk == "0\n":
+                cnfString += str(chunk)
+            elif chunk == " ":
+                continue
+            else:
+                cnfString += str(chunk) + ' '
+        cnfString = cnfString + '0'
+        # print(cnfString)
+        # add complete clasp string to completePreferences
+        completePreferences.append(cnfString)
+    # print(completePreferences) 
+    # print(penaltyAmount)
 
 #######################################################################################################
+## PENALTY LOGIC ##
 def runningPreferences():
     # Start dictionary of feasible objects with a start of zero penalty 
     totalPenalty = {}
@@ -248,11 +307,10 @@ def runningPreferences():
         print(i[0], i[1])
         if i[1] == sortTotalPenalty[0][1]:
             omniOptimal.append(i)
-    print(omniOptimal)
+    #print(omniOptimal)
 
 
         
-
 def macRunningPreferences():
     # Start dictionary of feasible objects with a start of zero penalty
     totalPenalty = {}
@@ -301,7 +359,49 @@ def macRunningPreferences():
     # cake BT ice-cream IF soup
         
 """
+#######################################################################################################
+## POSSIBILISTIC LOGIC ##
+# Tolerance 
+def runningPossibilisticPreferences():
+    # Start dictionary of feasible objects with a start of zero penalty 
+    totalTolerance = {}
+    for object in hcFeasibleObjects:
+        totalTolerance[object] = 1
+    # print(totalPenalty)
 
+    counter = 0
+    for claspInput in completePreferences:
+
+        cmdInput = claspInput
+        # print(cmdInput)
+        with open("Output.txt", "w") as text_file:
+            text_file.write(str(cmdInput))
+        claspIn = os.path.join(ROOT_DIR, 'clasp-3.3.2-win64.exe -n 0 Output.txt')
+        # print(claspIn)
+        claspExecute = subprocess.run(claspIn, stdout=subprocess.PIPE, text=True)
+        for line in claspExecute.stdout.splitlines():
+            # print(line)
+            if line.startswith('v'):
+                # checks if preference objects are feasible
+                if line in hcFeasibleObjects:
+                    if (1 - penaltyAmount[counter]) < totalTolerance[line]:
+                      totalTolerance[line] = 1 - penaltyAmount[counter]
+                      print(penaltyAmount[counter])
+                      print(1.00 - penaltyAmount[counter])
+        counter += 1
+
+    #print(totalPenalty)
+    sortTotalTolerance = sorted(totalTolerance.items(), key=lambda x: x[1])
+    # list of ordered objects from least penalty to most
+    # this will get us the optimal object
+    print(sortTotalTolerance)
+    omniOptimal =[]
+    """
+    for i in sortTotalPenalty:
+        print(i[0], i[1])
+        if i[1] == sortTotalPenalty[0][1]:
+            omniOptimal.append(i)
+    print(omniOptimal)"""
 
 #######################################################################################################
 # FRONT END #
@@ -324,11 +424,13 @@ def done():
     else:
         claspInput()
     setupPreferences()
+    #setupPossibilisticPreferences()
 
     if operatingSys == 'Darwin':
         macRunningPreferences()
     else:
         runningPreferences()
+        #runningPossibilisticPreferences()
     window.destroy()  # if pressed first, then ends whole process
 
 
