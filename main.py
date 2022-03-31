@@ -238,12 +238,12 @@ def runningPreferences():
                     totalPenalty[line] += penaltyAmount[counter]
         counter += 1
 
-    #print(totalPenalty)
+    # print(totalPenalty)
     sortTotalPenalty = sorted(totalPenalty.items(), key=lambda x: x[1])
     # list of ordered objects from least penalty to most
     # this will get us the optimal object
-    #print(sortTotalPenalty)
-    omniOptimal =[]
+    # print(sortTotalPenalty)
+    omniOptimal = []
 
     for i in sortTotalPenalty:
         print(i[0], i[1])
@@ -251,8 +251,6 @@ def runningPreferences():
             omniOptimal.append(i)
     print(omniOptimal)
 
-
-        
 
 def macRunningPreferences():
     # Start dictionary of feasible objects with a start of zero penalty
@@ -276,15 +274,17 @@ def macRunningPreferences():
                     totalPenalty[line] += penaltyAmount[counter]
         counter += 1
 
-    #print(totalPenalty)
+    # print(totalPenalty)
     sortTotalPenalty = sorted(totalPenalty.items(), key=lambda x: x[1])
     # list of ordered objects from least penalty to most
     # this will get us the optimal object
-    #print(sortTotalPenalty)
+    # print(sortTotalPenalty)
     for i in sortTotalPenalty:
         print(i[0], i[1])
 
     # print(totalPenalty)
+
+
 """       
     def outputPenaltyLogic():
     # fish AND wine     10
@@ -316,13 +316,15 @@ def chooseFile():
     # print(lines)
     files.append(str(lines))
 
+
 def preferenceChoice(choice):
     if choice == 1:
-         return 1
+        return 1
     if choice == 2:
-        return  2
+        return 2
     if choice == 3:
         return 3
+
 
 def done():
     operatingSys = platform.system()
@@ -368,6 +370,8 @@ myCanvas.create_image(0, 0, image=bg1)
 # add a label
 myCanvas.create_text(100, 150, text="Choose your item", font=("Bierstadt", 10), fill="white")
 myCanvas.create_text(100, 60, text="Choose your preference logic", font=("Bierstadt", 10), fill="white")
+
+
 # myCanvas.create_text(75, 140, text="Exit", font=("Bierstadt", 10), fill="white")
 
 
@@ -401,6 +405,36 @@ ddl = OptionMenu(
 )
 # putting a window on a window
 ddlWindow = myCanvas.create_window(100, 170, anchor="center", window=ddl)
+
+
+# Creating the drop-down for user to select a preference logic
+def preferenceSelect(event):
+    # if clicked.get() == "Select attributes file": popup to submit then execute below code
+    Select = Button(window, text="Select")  # commmand = preferenceChoice()
+    myCanvas.create_window(100, 110, anchor="center", window=Select)
+
+
+options2 = [
+    "Default",
+    "Penalty",
+    "Possibilistic",
+    "Qualitative"
+]
+# take in selected val
+clicked2 = StringVar()
+
+# set default val
+clicked2.set(options2[0])
+
+# provide a menu
+ddl2 = OptionMenu(
+    window,
+    clicked2,
+    *options2,
+    command=preferenceSelect
+)
+# putting a window on a window
+ddlWindow2 = myCanvas.create_window(100, 80, anchor="center", window=ddl2)
 """
 # this seems to be working
 attributesButton = Button(window, text="Select attributes file", command=chooseFile)
