@@ -153,6 +153,7 @@ def macClaspInput():
 
 
 #######################################################################################################
+## PENALTY LOGIC ##
 def setupPreferences():
     # WE NEED A WAY TO KNOW WHICH PREFERENCE WE ARE WORKING WITH
     # EACH BUTTON IS LINKED TO A CERTAIN INPUT FILE FOR THIS
@@ -211,8 +212,6 @@ def setupPreferences():
     # print(completePreferences) 
     # print(penaltyAmount)
 
-
-#######################################################################################################
 def runningPreferences():
     # Start dictionary of feasible objects with a start of zero penalty 
     totalPenalty = {}
@@ -238,20 +237,29 @@ def runningPreferences():
                     totalPenalty[line] += penaltyAmount[counter]
         counter += 1
 
-    # print(totalPenalty)
+    #print(totalPenalty)
     sortTotalPenalty = sorted(totalPenalty.items(), key=lambda x: x[1])
     # list of ordered objects from least penalty to most
     # this will get us the optimal object
-    # print(sortTotalPenalty)
-    omniOptimal = []
+    
+    #print(sortTotalPenalty)
+    omniOptimal =[]
 
     for i in sortTotalPenalty:
-        print(i[0], i[1])
+        #print(i[0], i[1])
         if i[1] == sortTotalPenalty[0][1]:
             omniOptimal.append(i)
-    print(omniOptimal)
+    #print(omniOptimal)
+    for entry in omniOptimal:
+        toConvert = entry[0].split()[1:5]
+        #print(toConvert)
+        # invertedAttributeToNumber = {v: k for k, v in attributeToNumber.items()}
+        invertedAttributeToNumber = dict([(value, key) for key, value in attributeToNumber.items()])
+        #print(invertedAttributeToNumber)
+        convertedOutput = ' '.join(str(invertedAttributeToNumber.get(int(a), a)) for a in toConvert)
+        print(convertedOutput)
 
-
+        
 def macRunningPreferences():
     # Start dictionary of feasible objects with a start of zero penalty
     totalPenalty = {}
@@ -274,34 +282,127 @@ def macRunningPreferences():
                     totalPenalty[line] += penaltyAmount[counter]
         counter += 1
 
-    # print(totalPenalty)
+    #print(totalPenalty)
     sortTotalPenalty = sorted(totalPenalty.items(), key=lambda x: x[1])
     # list of ordered objects from least penalty to most
     # this will get us the optimal object
-    # print(sortTotalPenalty)
+    #print(sortTotalPenalty)
     for i in sortTotalPenalty:
         print(i[0], i[1])
-
     # print(totalPenalty)
 
+#######################################################################################################
+## POSSIBILISTIC LOGIC ##
+def setupPossibilisticPreferences():
+    # WE NEED A WAY TO KNOW WHICH PREFERENCE WE ARE WORKING WITH
+    # EACH BUTTON IS LINKED TO A CERTAIN INPUT FILE FOR THIS
 
-"""       
-    def outputPenaltyLogic():
-    # fish AND wine     10
-    # wine OR cake      6
-    # beer AND beer OR beef AND NOT soup    7
+    # preference replaces the words in the preference file with their numeric value from attributeToNumber dict
+    # preferences = files[2].split()
+    # conversion = ' '.join(str(attributeToNumber.get(a, a)) for a in preferences)
+    preferenceObjects = str(files[2]).splitlines()
 
-    def outputPossibilisticLogic():
-    # fish AND wine     0.8
-    # wine OR cake      0.5
-    # beer AND beer OR beef AND NOT soup    0.6
+    # each index in array holds the clasp code per line in preference file input
+    # at least that is current goal
 
-    def outputQualitativeLogic():        
-    # fish BT beef IF
-    # wine BT beer IF fish
-    # cake BT ice-cream IF soup
-        
-"""
+    for line in preferenceObjects:
+        words = line.split()
+        newLines = 1
+
+        preferenceconversion = ' '.join(str(attributeToNumber.get(a, a)) for a in words)
+        tempTest = preferenceconversion.split()
+        # print("before")
+        # print(tempTest)
+        for pos in range(len(tempTest)):
+            if tempTest[pos] == 'NOT':
+                # if there's a NOT, multiplies the next element by -1
+                tempTest[pos + 1] = -1 * int(tempTest[pos + 1])
+                tempTest[pos] = " "
+                # ctempTest.pop(pos)
+                continue
+            if tempTest[pos] == 'OR':
+                # if there's an OR, does nothing and just skips
+                tempTest[pos] = " "
+                # tempTest.pop(pos)
+                continue
+            if tempTest[pos] == 'AND':
+                # if there's an AND, we must start a new line in clasp
+                # not sure how yet
+                tempTest[pos] = '0\n'
+                newLines += 1
+                continue
+        # add penalty to list penalty amount
+        penaltyAmount.append(float(tempTest.pop()))
+        #print(penaltyAmount)
+        # print(tempTest)
+        # cnfstring is going to be our input for CLASP
+        booleanVars = len(attributeToNumber) / 2
+        cnfString = "p cnf " + str(int(booleanVars)) + " " + str(newLines) + "\n"
+        for chunk in tempTest:
+            if chunk == "0\n":
+                cnfString += str(chunk)
+            elif chunk == " ":
+                continue
+            else:
+                cnfString += str(chunk) + ' '
+        cnfString = cnfString + '0'
+        # print(cnfString)
+        # add complete clasp string to completePreferences
+        completePreferences.append(cnfString)
+    # print(completePreferences) 
+    # print(penaltyAmount)
+
+
+def runningPossibilisticPreferences():
+    # Start dictionary of feasible objects with a start of zero penalty 
+    totalTolerance = {}
+    for object in hcFeasibleObjects:
+        totalTolerance[object] = 1
+    # print(totalPenalty)
+
+    counter = 0
+    for claspInput in completePreferences:
+
+        cmdInput = claspInput
+        # print(cmdInput)
+        with open("Output.txt", "w") as text_file:
+            text_file.write(str(cmdInput))
+        claspIn = os.path.join(ROOT_DIR, 'clasp-3.3.2-win64.exe -n 0 Output.txt')
+        # print(claspIn)
+        claspExecute = subprocess.run(claspIn, stdout=subprocess.PIPE, text=True)
+        for line in claspExecute.stdout.splitlines():
+            # print(line)
+            if line.startswith('v'):
+                # checks if preference objects are feasible
+                if line in hcFeasibleObjects:
+                    if (1 - penaltyAmount[counter]) < totalTolerance[line]:
+                      totalTolerance[line] = 1 - penaltyAmount[counter]
+                      #print(penaltyAmount[counter])
+                      #print(1.00 - penaltyAmount[counter])
+        counter += 1
+
+    #print(totalPenalty)
+    sortTotalTolerance = sorted(totalTolerance.items(), key=lambda x: x[1])
+    # list of ordered objects from least penalty to most
+    # this will get us the optimal object
+    # print(sortTotalTolerance)
+    omniOptimal =[]
+    
+    for i in sortTotalTolerance:
+        # print(i[0], i[1])
+        if i[1] == sortTotalTolerance[0][1]:
+            omniOptimal.append(i)
+    # print(omniOptimal)
+
+    for entry in omniOptimal:
+        toConvert = entry[0].split()[1:5]
+        #print(toConvert)
+        # invertedAttributeToNumber = {v: k for k, v in attributeToNumber.items()}
+        invertedAttributeToNumber = dict([(value, key) for key, value in attributeToNumber.items()])
+        #print(invertedAttributeToNumber)
+        convertedOutput = ' '.join(str(invertedAttributeToNumber.get(int(a), a)) for a in toConvert)
+        print(convertedOutput)
+
 
 
 #######################################################################################################
@@ -316,15 +417,13 @@ def chooseFile():
     # print(lines)
     files.append(str(lines))
 
-
 def preferenceChoice(choice):
     if choice == 1:
-        return 1
+         return 1
     if choice == 2:
-        return 2
+        return  2
     if choice == 3:
         return 3
-
 
 def done():
     operatingSys = platform.system()
@@ -334,11 +433,13 @@ def done():
     else:
         claspInput()
     setupPreferences()
+    #setupPossibilisticPreferences()
 
     if operatingSys == 'Darwin':
         macRunningPreferences()
     else:
         runningPreferences()
+        #runningPossibilisticPreferences()
     window.destroy()  # if pressed first, then ends whole process
 
 
@@ -370,8 +471,6 @@ myCanvas.create_image(0, 0, image=bg1)
 # add a label
 myCanvas.create_text(100, 150, text="Choose your item", font=("Bierstadt", 10), fill="white")
 myCanvas.create_text(100, 60, text="Choose your preference logic", font=("Bierstadt", 10), fill="white")
-
-
 # myCanvas.create_text(75, 140, text="Exit", font=("Bierstadt", 10), fill="white")
 
 
@@ -405,36 +504,6 @@ ddl = OptionMenu(
 )
 # putting a window on a window
 ddlWindow = myCanvas.create_window(100, 170, anchor="center", window=ddl)
-
-
-# Creating the drop-down for user to select a preference logic
-def preferenceSelect(event):
-    # if clicked.get() == "Select attributes file": popup to submit then execute below code
-    Select = Button(window, text="Select")  # commmand = preferenceChoice()
-    myCanvas.create_window(100, 110, anchor="center", window=Select)
-
-
-options2 = [
-    "Default",
-    "Penalty",
-    "Possibilistic",
-    "Qualitative"
-]
-# take in selected val
-clicked2 = StringVar()
-
-# set default val
-clicked2.set(options2[0])
-
-# provide a menu
-ddl2 = OptionMenu(
-    window,
-    clicked2,
-    *options2,
-    command=preferenceSelect
-)
-# putting a window on a window
-ddlWindow2 = myCanvas.create_window(100, 80, anchor="center", window=ddl2)
 """
 # this seems to be working
 attributesButton = Button(window, text="Select attributes file", command=chooseFile)
