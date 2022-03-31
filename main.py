@@ -5,10 +5,6 @@ import os
 import subprocess
 import platform
 
-window = Tk()
-window.title = "Enter files"
-window.geometry("475x300")
-window.eval('tk::PlaceWindow . center')
 ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
 # claspMacPath = os.path.join(ROOT_DIR, 'clasp-3.3.2-x86_64-macosx')
 completePreferences = []
@@ -213,6 +209,7 @@ def setupPreferences():
     # print(completePreferences) 
     # print(penaltyAmount)
 
+
 def runningPreferences():
     # Start dictionary of feasible objects with a start of zero penalty 
     totalPenalty = {}
@@ -238,29 +235,30 @@ def runningPreferences():
                     totalPenalty[line] += penaltyAmount[counter]
         counter += 1
 
-    #print(totalPenalty)
+    # print(totalPenalty)
     sortTotalPenalty = sorted(totalPenalty.items(), key=lambda x: x[1])
     # list of ordered objects from least penalty to most
     # this will get us the optimal object
-    
-    #print(sortTotalPenalty)
-    omniOptimal =[]
+
+    # print(sortTotalPenalty)
+    omniOptimal = []
 
     for i in sortTotalPenalty:
-        #print(i[0], i[1])
+        # print(i[0], i[1])
         if i[1] == sortTotalPenalty[0][1]:
             omniOptimal.append(i)
-    #print(omniOptimal)
+    # print(omniOptimal)
     for entry in omniOptimal:
         toConvert = entry[0].split()[1:5]
-        #print(toConvert)
+        # print(toConvert)
         # invertedAttributeToNumber = {v: k for k, v in attributeToNumber.items()}
         invertedAttributeToNumber = dict([(value, key) for key, value in attributeToNumber.items()])
-        #print(invertedAttributeToNumber)
+        # print(invertedAttributeToNumber)
         convertedOutput = ' '.join(str(invertedAttributeToNumber.get(int(a), a)) for a in toConvert)
         print(convertedOutput)
+        return convertedOutput
 
-        
+
 def macRunningPreferences():
     # Start dictionary of feasible objects with a start of zero penalty
     totalPenalty = {}
@@ -276,21 +274,38 @@ def macRunningPreferences():
             text_file.write(str(cmdInput))
         change = "cd " + ROOT_DIR
         claspIn = change + "; ./clasp-3.3.2-x86_64-macosx -n 0 Output.txt"
-        claspExecute = subprocess.run(claspIn, stdout=subprocess.PIPE, shell=True, text=True)
+        claspExecute = subprocess.run(claspIn, stdout=subprocess.PIPE, text=True)
         for line in claspExecute.stdout.splitlines():
+            # print(line)
             if line.startswith('v'):
+                # checks if preference objects are feasible
                 if line in hcFeasibleObjects:
                     totalPenalty[line] += penaltyAmount[counter]
         counter += 1
 
-    #print(totalPenalty)
+        # print(totalPenalty)
     sortTotalPenalty = sorted(totalPenalty.items(), key=lambda x: x[1])
     # list of ordered objects from least penalty to most
     # this will get us the optimal object
-    #print(sortTotalPenalty)
+
+    # print(sortTotalPenalty)
+    omniOptimal = []
+
     for i in sortTotalPenalty:
-        print(i[0], i[1])
-    # print(totalPenalty)
+        # print(i[0], i[1])
+        if i[1] == sortTotalPenalty[0][1]:
+            omniOptimal.append(i)
+    # print(omniOptimal)
+    for entry in omniOptimal:
+        toConvert = entry[0].split()[1:5]
+        # print(toConvert)
+        # invertedAttributeToNumber = {v: k for k, v in attributeToNumber.items()}
+        invertedAttributeToNumber = dict([(value, key) for key, value in attributeToNumber.items()])
+        # print(invertedAttributeToNumber)
+        convertedOutput = ' '.join(str(invertedAttributeToNumber.get(int(a), a)) for a in toConvert)
+        print(convertedOutput)
+        return convertedOutput
+
 
 #######################################################################################################
 ## POSSIBILISTIC LOGIC ##
@@ -334,7 +349,7 @@ def setupPossibilisticPreferences():
                 continue
         # add penalty to list penalty amount
         penaltyAmount.append(float(tempTest.pop()))
-        #print(penaltyAmount)
+        # print(penaltyAmount)
         # print(tempTest)
         # cnfstring is going to be our input for CLASP
         booleanVars = len(attributeToNumber) / 2
@@ -377,18 +392,18 @@ def runningPossibilisticPreferences():
                 # checks if preference objects are feasible
                 if line in hcFeasibleObjects:
                     if (1 - penaltyAmount[counter]) < totalTolerance[line]:
-                      totalTolerance[line] = 1 - penaltyAmount[counter]
-                      #print(penaltyAmount[counter])
-                      #print(1.00 - penaltyAmount[counter])
+                        totalTolerance[line] = 1 - penaltyAmount[counter]
+                        # print(penaltyAmount[counter])
+                        # print(1.00 - penaltyAmount[counter])
         counter += 1
 
-    #print(totalPenalty)
+    # print(totalPenalty)
     sortTotalTolerance = sorted(totalTolerance.items(), key=lambda x: x[1])
     # list of ordered objects from least penalty to most
     # this will get us the optimal object
     # print(sortTotalTolerance)
-    omniOptimal =[]
-    
+    omniOptimal = []
+
     for i in sortTotalTolerance:
         # print(i[0], i[1])
         if i[1] == sortTotalTolerance[0][1]:
@@ -397,10 +412,10 @@ def runningPossibilisticPreferences():
 
     for entry in omniOptimal:
         toConvert = entry[0].split()[1:5]
-        #print(toConvert)
+        # print(toConvert)
         # invertedAttributeToNumber = {v: k for k, v in attributeToNumber.items()}
         invertedAttributeToNumber = dict([(value, key) for key, value in attributeToNumber.items()])
-        #print(invertedAttributeToNumber)
+        # print(invertedAttributeToNumber)
         convertedOutput = ' '.join(str(invertedAttributeToNumber.get(int(a), a)) for a in toConvert)
         print(convertedOutput)
 
@@ -438,6 +453,13 @@ def setupQualitativePreferences():
 #######################################################################################################
 # FRONT END #
 #######################################################################################################
+
+window = Tk()
+window.title = "Enter files"
+window.geometry("950x300")
+window.eval('tk::PlaceWindow . center')
+
+
 def chooseFile():
     Tk().withdraw()  # we don't want a full GUI, so keep the root window from appearing
     filename = askopenfilename()  # show an "Open" dialog box and return the path to the selected file
@@ -447,13 +469,15 @@ def chooseFile():
     # print(lines)
     files.append(str(lines))
 
+
 def preferenceChoice(choice):
     if choice == 1:
-         return 1
+        return 1
     if choice == 2:
-        return  2
+        return 2
     if choice == 3:
         return 3
+
 
 def done():
     operatingSys = platform.system()
@@ -463,16 +487,15 @@ def done():
     else:
         claspInput()
     setupPreferences()
-    #setupPossibilisticPreferences()
-    # setupQualitativePreferences()
+    # setupPossibilisticPreferences()
 
     if operatingSys == 'Darwin':
         macRunningPreferences()
     else:
         runningPreferences()
-        #runningPossibilisticPreferences()
-    output()
-    window.destroy()  # if pressed first, then ends whole process
+        # runningPossibilisticPreferences()
+    displayOut()
+    # window.destroy()  # if pressed first, then ends whole process
 
 
 # #adding needed buttons
@@ -503,9 +526,18 @@ myCanvas.create_image(0, 0, image=bg1)
 # add a label
 myCanvas.create_text(100, 150, text="Choose your item", font=("Bierstadt", 10), fill="white")
 myCanvas.create_text(100, 60, text="Choose your preference logic", font=("Bierstadt", 10), fill="white")
+
 # myCanvas.create_text(75, 140, text="Exit", font=("Bierstadt", 10), fill="white")
 
-# add a drop down 
+output = Entry(window)
+myCanvas.create_window(712, 150, anchor="center", height=300, width=475, window=output)
+
+
+def displayOut():
+    output.insert(0, runningPreferences())
+
+
+# add a drop down
 
 def selected(event):
     # if clicked.get() == "Select attributes file": popup to submit then execute below code
