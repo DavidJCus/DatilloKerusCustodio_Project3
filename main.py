@@ -415,7 +415,7 @@ def setupQualitativePreferences():
     # preferences = files[2].split()
     # conversion = ' '.join(str(attributeToNumber.get(a, a)) for a in preferences)
     preferenceObjects = str(files[2]).splitlines()
-
+    ifTest = []
     # each index in array holds the clasp code per line in preference file input
     # at least that is current goal
 
@@ -430,7 +430,7 @@ def setupQualitativePreferences():
         for pos in range(len(tempTest)):
             if tempTest[pos] == 'IF':
                 # if there's a NOT, multiplies the next element by -1
-                print(tempTest[pos + 1:])
+                ifTest.append(tempTest[pos + 1:])
                 continue
 
 
