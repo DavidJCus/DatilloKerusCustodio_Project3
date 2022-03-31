@@ -1,4 +1,5 @@
 from tkinter import *
+from tkinter import messagebox
 from tkinter.filedialog import askopenfilename
 import os
 import subprocess
@@ -403,6 +404,35 @@ def runningPossibilisticPreferences():
         convertedOutput = ' '.join(str(invertedAttributeToNumber.get(int(a), a)) for a in toConvert)
         print(convertedOutput)
 
+#######################################################################################################
+## QUALITATIVE CHOICE LOGIC ##
+
+def setupQualitativePreferences():
+    # WE NEED A WAY TO KNOW WHICH PREFERENCE WE ARE WORKING WITH
+    # EACH BUTTON IS LINKED TO A CERTAIN INPUT FILE FOR THIS
+
+    # preference replaces the words in the preference file with their numeric value from attributeToNumber dict
+    # preferences = files[2].split()
+    # conversion = ' '.join(str(attributeToNumber.get(a, a)) for a in preferences)
+    preferenceObjects = str(files[2]).splitlines()
+
+    # each index in array holds the clasp code per line in preference file input
+    # at least that is current goal
+
+    for line in preferenceObjects:
+        words = line.split()
+        newLines = 1
+
+        preferenceconversion = ' '.join(str(attributeToNumber.get(a, a)) for a in words)
+        tempTest = preferenceconversion.split()
+        print("before")
+        print(tempTest)
+        for pos in range(len(tempTest)):
+            if tempTest[pos] == 'IF':
+                # if there's a NOT, multiplies the next element by -1
+                print(tempTest[pos + 1:])
+                continue
+
 
 
 #######################################################################################################
@@ -434,12 +464,14 @@ def done():
         claspInput()
     setupPreferences()
     #setupPossibilisticPreferences()
+    # setupQualitativePreferences()
 
     if operatingSys == 'Darwin':
         macRunningPreferences()
     else:
         runningPreferences()
         #runningPossibilisticPreferences()
+    output()
     window.destroy()  # if pressed first, then ends whole process
 
 
@@ -473,7 +505,6 @@ myCanvas.create_text(100, 150, text="Choose your item", font=("Bierstadt", 10), 
 myCanvas.create_text(100, 60, text="Choose your preference logic", font=("Bierstadt", 10), fill="white")
 # myCanvas.create_text(75, 140, text="Exit", font=("Bierstadt", 10), fill="white")
 
-
 # add a drop down 
 
 def selected(event):
@@ -504,6 +535,9 @@ ddl = OptionMenu(
 )
 # putting a window on a window
 ddlWindow = myCanvas.create_window(100, 170, anchor="center", window=ddl)
+
+def output():
+    messagebox.showinfo(message="This works lol ")
 """
 # this seems to be working
 attributesButton = Button(window, text="Select attributes file", command=chooseFile)
@@ -515,5 +549,6 @@ preferencesButton.pack()
 endButton = Button(window, text="Done", command=done)
 endButton.pack(pady=20)
 """
+
 window.mainloop()
 #######################################################################################################
