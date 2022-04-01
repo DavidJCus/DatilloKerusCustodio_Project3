@@ -243,7 +243,7 @@ def runningPreferences():
 
     # print(sortTotalPenalty)
     omniOptimal = []
-
+    guiOUT = []
     for i in sortTotalPenalty:
         # print(i[0], i[1])
         if i[1] == sortTotalPenalty[0][1]:
@@ -257,7 +257,8 @@ def runningPreferences():
         # print(invertedAttributeToNumber)
         convertedOutput = ' '.join(str(invertedAttributeToNumber.get(int(a), a)) for a in toConvert)
         print(convertedOutput)
-        return convertedOutput
+        guiOUT.append(convertedOutput)
+    return str(guiOUT)
 
 
 def macRunningPreferences():
@@ -496,6 +497,18 @@ def done():
         runningPreferences()
         # runningPossibilisticPreferences()
     # displayOut()
+
+    root = Tk()
+    root.title('This better work I swear')
+    root.geometry("500x450")
+    root.eval('tk::PlaceWindow . center')
+
+    label = Label(root, text='')
+    label.pack(pady=20)
+
+    label.config(text=runningPreferences())
+
+    root.mainloop()
     # window.destroy()  # if pressed first, then ends whole process
 
 
@@ -538,6 +551,8 @@ attributeLabel = Label(image=newAttributeBTN)
 
 # adding needed buttons
 attributesButton = Button(window, image=attributesImg, command=chooseFile)
+
+
 # constraintButton = Button(window, text="Select the hard constraints files", command=chooseFile)
 # preferencesButton = Button(window, text="Select the preferences files", command=chooseFile)
 
@@ -545,16 +560,6 @@ attributesButton = Button(window, image=attributesImg, command=chooseFile)
 # attributesButtonWindow = myCanvas.create_window(50,50, anchor="c", window=attributesButton)
 # constraintButtonWindow = myCanvas.create_window(350,130, anchor="c", window=constraintButton)
 # preferencesButtonWindow = myCanvas.create_window(350,160, anchor="c", window=preferencesButton)
-
-# new
-output = Entry(window)
-myCanvas.create_window(712, 150, anchor="center", height=300, width=475, window=output)
-
-
-# new
-def displayOut():
-    text = runningPreferences()
-    output.insert(0, "Hello")
 
 
 # add a drop down
