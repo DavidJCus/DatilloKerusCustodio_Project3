@@ -4,6 +4,7 @@ from tkinter.filedialog import askopenfilename
 import os
 import subprocess
 import platform
+from PIL import Image, ImageTk
 
 ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
 # claspMacPath = os.path.join(ROOT_DIR, 'clasp-3.3.2-x86_64-macosx')
@@ -419,6 +420,7 @@ def runningPossibilisticPreferences():
         convertedOutput = ' '.join(str(invertedAttributeToNumber.get(int(a), a)) for a in toConvert)
         print(convertedOutput)
 
+
 #######################################################################################################
 ## QUALITATIVE CHOICE LOGIC ##
 
@@ -447,7 +449,6 @@ def setupQualitativePreferences():
                 # if there's a NOT, multiplies the next element by -1
                 ifTest.append(tempTest[pos + 1:])
                 continue
-
 
 
 #######################################################################################################
@@ -494,7 +495,7 @@ def done():
     else:
         runningPreferences()
         # runningPossibilisticPreferences()
-    displayOut()
+    # displayOut()
     # window.destroy()  # if pressed first, then ends whole process
 
 
@@ -514,22 +515,23 @@ myCanvas.create_text(50, 20, text="Constraints", font=("Batang", 11), fill="blac
 myCanvas.create_text(50, 150, text="Preference", font=("Batang", 11), fill="black")
 
 # create labels for botton images
- #attributes
+# attributes
 imagePath2 = os.path.join(ROOT_DIR, 'attributesBtn.png')
+attributesImgPIL = Image.open(imagePath2)
 attributesImg = PhotoImage(file=imagePath2)
-#attributeLabel = Label(image=attributesImg)
-resized = attributesImg.resize((100,100), Image.ANTIALIAS)
-newAttributeBTN = ImageTK.PhotoImage(resized)
+# attributeLabel = Label(image=attributesImg)
+resized = attributesImgPIL.resize((100, 100), Image.ANTIALIAS)
+newAttributeBTN = ImageTk.PhotoImage(resized)
 attributeLabel = Label(image=newAttributeBTN)
- #hard Constraint
+# hard Constraint
 # imagePath3 = os.path.join(ROOT_DIR, 'HCBtn.png')
 # hardConstraintImg = PhotoImage(file=imagePath3)
 # hardConstraintLabel = Label(image=hardConstraintImg)
- #browse
+# browse
 # imagePath4 = os.path.join(ROOT_DIR, 'browseBtn.png')
 # browseImg = PhotoImage(file=imagePath4)
 # browseLabel = Label(image=browseImg)
- #done
+# done
 # imagePath5 = os.path.join(ROOT_DIR, 'doneBtn.png')
 # doneImg = PhotoImage(file=imagePath5)
 # doneLabel = Label(image=doneImg)
@@ -544,12 +546,16 @@ attributesButton = Button(window, image=attributesImg, command=chooseFile)
 # constraintButtonWindow = myCanvas.create_window(350,130, anchor="c", window=constraintButton)
 # preferencesButtonWindow = myCanvas.create_window(350,160, anchor="c", window=preferencesButton)
 
-#new
+# new
 output = Entry(window)
 myCanvas.create_window(712, 150, anchor="center", height=300, width=475, window=output)
-#new
+
+
+# new
 def displayOut():
-    output.insert(0, runningPreferences())
+    text = runningPreferences()
+    output.insert(0, "Hello")
+
 
 # add a drop down
 def selected(event):
@@ -582,9 +588,11 @@ ddl = OptionMenu(
 # putting a window on a window
 ddlWindow = myCanvas.create_window(100, 190, anchor="center", window=ddl)
 
+
 # new
 def output():
     messagebox.showinfo(message="This works lol ")
+
 
 window.mainloop()
 #######################################################################################################
