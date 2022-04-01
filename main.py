@@ -16,7 +16,6 @@ files = []  # Holds the content of opened files
 attributeToNumber = {}  # Dictionary mapping words in atributes file to numbers for CLASP input
 hcFeasibleObjects = []
 
-
 #######################################################################################################
 def setUpAttribute():
     attributes = files[0].split()
@@ -441,6 +440,7 @@ window.geometry("270x500")
 #window.eval('tk::PlaceWindow . center')
 preferenceFile = 0
 
+
 def chooseFile():
     Tk().withdraw()  # we don't want a full GUI, so keep the root window from appearing
     filename = askopenfilename()  # show an "Open" dialog box and return the path to the selected file
@@ -530,7 +530,7 @@ myCanvas.create_image(0, 0, image=newBg)
 # add a label to canvas
 myCanvas.create_text(50, 20, text="Constraints", font=("Batang", 11), fill="black")
 myCanvas.create_text(50, 140, text="Preference", font=("Batang", 11), fill="black")
-myCanvas.create_text(64, 305, text="Possible Tasks", font=("Batang", 10), fill="black")
+myCanvas.create_text(64, 305, text="Possible Tasks", font=("Batang", 11), fill="black")
 
 # create images and resize them for buttons
 # attributes
