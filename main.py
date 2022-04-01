@@ -517,7 +517,10 @@ myCanvas.create_text(50, 150, text="Preference", font=("Batang", 11), fill="blac
  #attributes
 imagePath2 = os.path.join(ROOT_DIR, 'attributesBtn.png')
 attributesImg = PhotoImage(file=imagePath2)
-attributeLabel = Label(image=attributesImg)
+#attributeLabel = Label(image=attributesImg)
+resized = attributesImg.resize((100,100), Image.ANTIALIAS)
+newAttributeBTN = ImageTK.PhotoImage(resized)
+attributeLabel = Label(image=newAttributeBTN)
  #hard Constraint
 # imagePath3 = os.path.join(ROOT_DIR, 'HCBtn.png')
 # hardConstraintImg = PhotoImage(file=imagePath3)
