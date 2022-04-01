@@ -437,7 +437,7 @@ def setupQualitativePreferences():
 #######################################################################################################
 window = Tk()
 window.title = "Enter files"
-window.geometry("270x500")
+window.geometry("270x570")
 window.eval('tk::PlaceWindow . center')
 preferenceFile = 0
 
@@ -484,11 +484,27 @@ def chooseQualitative():
     global preferenceFile
     preferenceFile = 3
 
+option = 0
+
+def chooseFeasability():
+    global option
+    option = 1
+
+def chooseExemplification():
+    global option
+    option = 2
+
+def chooseOptimization():
+    global option
+    option = 3
+
+def chooseOmni():
+    global option
+    option = 4
+
 
 def done():
-    operatingSys = platform.system()
     setUpAttribute()
-
     claspInput()
     setupPreferences()
     # setupPossibilisticPreferences()
@@ -508,6 +524,8 @@ def done():
         label.config(text=runningPossibilisticPreferences())
     elif preferenceFile == 3:
         label.config(text="Qualitative goes here")
+
+    print(option)
     root.mainloop()
     # window.destroy()  # if pressed first, then ends whole process
 
@@ -580,8 +598,17 @@ qualitativeButton = Button(window, image=newQualitativeBTN, command=chooseQualit
 
 
 #temporary
-doneButton = Button(window, command=done)
-doneButtonWindow = myCanvas.create_window(130, 400, anchor="center", window=doneButton)
+doneButton = Button(window, command=done, text="done")
+doneButtonWindow = myCanvas.create_window(130, 550, anchor="center", window=doneButton)
+
+feasabilityButton = Button(window, command=chooseFeasability, text="Choose feasability")
+feasabilityButtonWindow = myCanvas.create_window(130, 390, anchor="center", window=feasabilityButton)
+exemplificationButton = Button(window, command=chooseExemplification, text="Choose exemplification")
+exemplificationButtonWindow = myCanvas.create_window(130, 420, anchor="center", window=exemplificationButton)
+optimizationButton = Button(window, command=chooseOptimization, text="Choose optimization")
+optimizationButtonWindow = myCanvas.create_window(130, 450, anchor="center", window=optimizationButton)
+omniButton = Button(window, command=chooseOmni, text="Choose omnioptimization")
+omniButtonWindow = myCanvas.create_window(130, 480, anchor="center", window=omniButton)
 
 
 # creating windows of buttons and adding onto canvas
