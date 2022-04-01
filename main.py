@@ -544,7 +544,7 @@ def done():
     # window.destroy()  # if pressed first, then ends whole process
 
 
-# define image
+# define image for canvas
 imagePath1 = os.path.join(ROOT_DIR, 'GreyBG.png')  # loads images.png no matter where the project is located
 bg = Image.open(imagePath1)
 resizedd = bg.resize((530, 1155), Image.ANTIALIAS)
@@ -558,11 +558,11 @@ myCanvas.pack(fill="both", expand=True)
 # set image in canvas
 myCanvas.create_image(0, 0, image=newBg)
 
-# add a label
+# add a label to canvas
 myCanvas.create_text(50, 20, text="Constraints", font=("Batang", 11), fill="black")
 myCanvas.create_text(50, 170, text="Preference", font=("Batang", 11), fill="black")
 
-# create labels for botton images
+# create images and resize them for buttons
 # attributes
 imagePath2 = os.path.join(ROOT_DIR, 'attributesBtn.png')
 attributesImg = Image.open(imagePath2)
@@ -572,7 +572,7 @@ newAttributeBTN = ImageTk.PhotoImage(resized2)
 # hard Constraint
 imagePath3 = os.path.join(ROOT_DIR, 'HCBtn.png')
 hardConstraintImg = Image.open(imagePath3)
-resized3 = hardConstraintImg.resize((270, 60), Image.ANTIALIAS)
+resized3 = hardConstraintImg.resize((270, 50), Image.ANTIALIAS)
 newHcBTN = ImageTk.PhotoImage(resized3)
 
 # # browse
@@ -587,17 +587,35 @@ newHcBTN = ImageTk.PhotoImage(resized3)
 # resized = doneImg.resize((270, 50), Image.ANTIALIAS)
 # newAttributeBTN = ImageTk.PhotoImage(resized)
 
+# preferences
+imagePath6 = os.path.join(ROOT_DIR, 'PenaltyBtn.png')
+penaltyImg = Image.open(imagePath6)
+resized6 = penaltyImg.resize((270, 50), Image.ANTIALIAS)
+newPenaltyBTN = ImageTk.PhotoImage(resized6)
+
+imagePath7 = os.path.join(ROOT_DIR, 'possibilisticBtn.png')
+possibilisticImg = Image.open(imagePath7)
+resized7 = possibilisticImg.resize((270, 50), Image.ANTIALIAS)
+newPossibilisticBTN = ImageTk.PhotoImage(resized7)
+
+imagePath8 = os.path.join(ROOT_DIR, 'QualitativeBtn.png')
+QualitativeImg = Image.open(imagePath8)
+resized8 = QualitativeImg.resize((270, 50), Image.ANTIALIAS)
+newQualitativeBTN = ImageTk.PhotoImage(resized8)
 
 # adding needed buttons
 attributesButton = Button(window, image=newAttributeBTN, command=chooseFile, borderwidth=0,highlightthickness=0,border=0)
 constraintButton = Button(window, image=newHcBTN, command=chooseFile, borderwidth=0,highlightthickness=0,border=0)
-# preferencesButton = Button(window, text="Select the preferences files", command=chooseFile)
+PenaltyButton = Button(window, image=newPenaltyBTN, command=chooseFile, borderwidth=0,highlightthickness=0,border=0)
+possibilisticButton = Button(window, image=newPossibilisticBTN, command=chooseFile, borderwidth=0,highlightthickness=0,border=0)
+qualitativeButton = Button(window, image=newQualitativeBTN, command=chooseFile, borderwidth=0,highlightthickness=0,border=0)
 
 # creating windows of buttons and adding onto canvas
 attributesButtonWindow = myCanvas.create_window(130,60, anchor="c", window=attributesButton)
 constraintButtonWindow = myCanvas.create_window(130,118, anchor="c", window=constraintButton)
-# preferencesButtonWindow = myCanvas.create_window(350,160, anchor="c", window=preferencesButton)
-
+penaltyButtonWindow = myCanvas.create_window(130,210, anchor="c", window=PenaltyButton)
+possibilisticButtonWindow = myCanvas.create_window(130,270, anchor="c", window=possibilisticButton)
+qualitativeButtonWindow = myCanvas.create_window(130,330, anchor="c", window=qualitativeButton)
 
 # add a drop down
 def selected(event):
@@ -627,8 +645,8 @@ ddl = OptionMenu(
     *options,
     command=selected
 )
-# putting a window on a window
-ddlWindow = myCanvas.create_window(100, 250, anchor="center", window=ddl)
+# putting a window for ddl on canvas
+#ddlWindow = myCanvas.create_window(100, 250, anchor="center", window=ddl)
 
 
 # new
