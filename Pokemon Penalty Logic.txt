@@ -1,0 +1,6 @@
+sprigatito AND lucario, 10
+NOT muk AND NOT machamp, 2
+gengar OR squirtle, 6
+bulbasaur OR NOT aggron, 4
+machamp AND metagross OR dragonite AND NOT charmander, 7
+quaxly OR NOT fuecoco AND drapion, 1
