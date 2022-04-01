@@ -597,7 +597,7 @@ possibilisticButton = Button(window, image=newPossibilisticBTN, command=choosePo
 qualitativeButton = Button(window, image=newQualitativeBTN, command=chooseQualitative, borderwidth=0,highlightthickness=0,border=0)
 
 
-#temporary
+#temporary for testing
 doneButton = Button(window, command=done, text="done")
 doneButtonWindow = myCanvas.create_window(130, 550, anchor="center", window=doneButton)
 
