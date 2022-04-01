@@ -1,3 +1,4 @@
+from cgitb import text
 from tkinter import *
 from tkinter import messagebox
 from tkinter.filedialog import askopenfilename
@@ -15,15 +16,428 @@ preference = 0
 files = []  # Holds the content of opened files
 attributeToNumber = {}  # Dictionary mapping words in atributes file to numbers for CLASP input
 hcFeasibleObjects = []
+
+
+#######################################################################################################
+def setUpAttribute():
+    attributes = files[0].split()
+    # print(attributes)
+    totalNumberOfAttributes = int(len(attributes) / 3)
+    for a in range(1, totalNumberOfAttributes + 1):
+        # assigning numbers to attributes. Either x or -x
+        attributeToNumber[attributes[(a * 3 - 2)]] = a
+        attributeToNumber[attributes[(a * 3 - 1)]] = -1 * a
+        # print(attributes[(a*3-2)])
+        # print(attributes[(a*3-1)])
+    # print(attributeToNumber)
+    return attributeToNumber
+
+
+#######################################################################################################
+def setupHardConstraints():
+    # conversion replaces the words in the hard constraints file with their numeric value from attributeToNumber dict
+    constraints = files[1].split()
+    conversion = ' '.join(str(attributeToNumber.get(a, a)) for a in constraints)
+    # print(constraints)
+    # print(conversion)
+
+    newNumbers = []  # this will store an array of the numbers we get after computing though the NOTs and ORs
+    conversionSplit = conversion.split()
+    num = int(len(conversionSplit))
+    skip = 0
+    lines = 1
+    for b in range(num):
+        if skip == 1:
+            skip = 0
+            continue
+        if conversionSplit[b] == 'NOT' and b > 1 and conversionSplit[b - 1] != 'OR':
+            # this adds the 0 and new line to the array of numbers.
+            newNumbers.append(0)
+            newNumbers.append('\n')
+            lines += 1
+        if conversionSplit[b] == 'NOT':
+            # if there's a NOT, multiplies the next element by -1, adds it to the array, then skips computing
+            # the next element
+            number = -1 * int(conversionSplit[b + 1])
+            newNumbers.append(number)
+            skip = 1
+            continue
+        if conversionSplit[b] == 'OR':
+            # if there's an OR, does nothing and just skips
+            continue
+        if conversionSplit[b] != 'NOT' or conversionSplit[b] != 'OR':
+            # if there's no NOT or an OR, just adds the number to the array
+            newNumbers.append(int(conversionSplit[b]))
+
+    newNumbers.append(0)  # adds a 0 to the last line
+    # print(conversionSplit)
+    # print(newNumbers)
+
+    """
+    # this gets the unique attributes for the first line of CLASP CNF input
+    uniqueAttributes = -1  # this method counts 0 as a unique value, so we account for that by starting at -1
+    uniqueList = []
+    num3 = int(len(newNumbers))
+    for a in range(num3):
+        if newNumbers[a] != '\n' and abs(int(newNumbers[a])) not in uniqueList:
+            uniqueAttributes += 1
+            uniqueList.append(abs(int(newNumbers[a])))
+    """
+
+    booleanVars = len(attributeToNumber) / 2
+
+    # final string is going to be our input for CLASP
+    finalString = "p cnf " + str(int(booleanVars)) + " " + str(lines) + "\n"
+    num2 = int(len(newNumbers))
+    for num in range(num2):
+        if num < num2 and [num + 1] == '\n':
+            finalString += str(newNumbers[num])
+            continue
+        if newNumbers[num] == '\n':
+            finalString += str(newNumbers[num])
+            continue
+        finalString += str(newNumbers[num]) + " "
+        if num == num2:
+            finalString += str(newNumbers[num])
+    # print(finalString)
+    return finalString
+
+
+#######################################################################################################
+def claspInput():
+    # TODO: add mac support here instead of new functions
+    cmdInput = setupHardConstraints()
+    # the executable for clasp should be in the same place as this program
+    with open("Output.txt", "w") as text_file:
+        text_file.write(str(cmdInput))
+    operatingSys = platform.system()
+    if operatingSys == "Darwin":
+        change = "cd " + ROOT_DIR
+        claspIn = change + "; ./clasp-3.3.2-x86_64-macosx -n 0 Output.txt"
+        claspExecute = subprocess.run(claspIn, stdout=subprocess.PIPE, shell=True, text=True)
+    else:
+        claspIn = os.path.join(ROOT_DIR, 'clasp-3.3.2-win64.exe -n 0 Output.txt')
+        claspExecute = subprocess.run(claspIn, stdout=subprocess.PIPE, text=True)
+    # print(claspIn)
+
+    # print(claspExecute.stdout)
+    # print("executed")
+    for line in claspExecute.stdout.splitlines():
+        # print(line)
+        if line.__contains__('SATISFIABLE'):
+            print("Returned Satisfiable")
+            # return 1
+        elif line.__contains__('UNSATISFIABLE'):
+            print("Returned Unsatisfiable")
+            # return 0
+        elif line.__contains__('UNKNOWN'):
+            print("Returned Unknown")
+            # return 2
+        elif line.startswith('v'):
+            hcFeasibleObjects.append(line)
+    # print(hcFeasibleObjects)
+
+
+#######################################################################################################
+## PENALTY LOGIC ##
+def setupPreferences():
+    # WE NEED A WAY TO KNOW WHICH PREFERENCE WE ARE WORKING WITH
+    # EACH BUTTON IS LINKED TO A CERTAIN INPUT FILE FOR THIS
+
+    # preference replaces the words in the preference file with their numeric value from attributeToNumber dict
+    # preferences = files[2].split()
+    # conversion = ' '.join(str(attributeToNumber.get(a, a)) for a in preferences)
+    preferenceObjects = str(files[2]).splitlines()
+
+    # each index in array holds the clasp code per line in preference file input
+    # at least that is current goal
+
+    for line in preferenceObjects:
+        words = line.split()
+        newLines = 1
+
+        preferenceconversion = ' '.join(str(attributeToNumber.get(a, a)) for a in words)
+        tempTest = preferenceconversion.split()
+        # print("before")
+        # print(tempTest)
+        for pos in range(len(tempTest)):
+            if tempTest[pos] == 'NOT':
+                # if there's a NOT, multiplies the next element by -1
+                tempTest[pos + 1] = -1 * int(tempTest[pos + 1])
+                tempTest[pos] = " "
+                # ctempTest.pop(pos)
+                continue
+            if tempTest[pos] == 'OR':
+                # if there's an OR, does nothing and just skips
+                tempTest[pos] = " "
+                # tempTest.pop(pos)
+                continue
+            if tempTest[pos] == 'AND':
+                # if there's an AND, we must start a new line in clasp
+                # not sure how yet
+                tempTest[pos] = '0\n'
+                newLines += 1
+                continue
+        # add penalty to list penalty amount
+        penaltyAmount.append(int(tempTest.pop()))
+        # print(tempTest)
+        # cnfstring is going to be our input for CLASP
+        booleanVars = len(attributeToNumber) / 2
+        cnfString = "p cnf " + str(int(booleanVars)) + " " + str(newLines) + "\n"
+        for chunk in tempTest:
+            if chunk == "0\n":
+                cnfString += str(chunk)
+            elif chunk == " ":
+                continue
+            else:
+                cnfString += str(chunk) + ' '
+        cnfString = cnfString + '0'
+        # print(cnfString)
+        # add complete clasp string to completePreferences
+        completePreferences.append(cnfString)
+    # print(completePreferences) 
+    # print(penaltyAmount)
+
+
+def runningPreferences():
+    # Start dictionary of feasible objects with a start of zero penalty 
+    totalPenalty = {}
+    for object in hcFeasibleObjects:
+        totalPenalty[object] = 0
+    # print(totalPenalty)
+
+    counter = 0
+    for claspInput in completePreferences:
+        operatingSys = platform.system()
+        cmdInput = claspInput
+        # print(cmdInput)
+        with open("Output.txt", "w") as text_file:
+            text_file.write(str(cmdInput))
+        if operatingSys == "Darwin":
+            change = "cd " + ROOT_DIR
+            claspIn = change + "; ./clasp-3.3.2-x86_64-macosx -n 0 Output.txt"
+            claspExecute = subprocess.run(claspIn, stdout=subprocess.PIPE, shell=True, text=True)
+        else:
+            claspIn = os.path.join(ROOT_DIR, 'clasp-3.3.2-win64.exe -n 0 Output.txt')
+            claspExecute = subprocess.run(claspIn, stdout=subprocess.PIPE, text=True)
+        for line in claspExecute.stdout.splitlines():
+            # print(line)
+            if line.startswith('v'):
+                # checks if preference objects are feasible
+                if line in hcFeasibleObjects:
+                    totalPenalty[line] += penaltyAmount[counter]
+        counter += 1
+
+    # print(totalPenalty)
+    sortTotalPenalty = sorted(totalPenalty.items(), key=lambda x: x[1])
+    # list of ordered objects from least penalty to most
+    # this will get us the optimal object
+
+    # print(sortTotalPenalty)
+    omniOptimal = []
+    guiOUT = []
+    for i in sortTotalPenalty:
+        # print(i[0], i[1])
+        if i[1] == sortTotalPenalty[0][1]:
+            omniOptimal.append(i)
+    # print(omniOptimal)
+    for entry in omniOptimal:
+        toConvert = entry[0].split()[1:9]
+        # print(toConvert)
+        # invertedAttributeToNumber = {v: k for k, v in attributeToNumber.items()}
+        invertedAttributeToNumber = dict([(value, key) for key, value in attributeToNumber.items()])
+        # print(invertedAttributeToNumber)
+        convertedOutput = ' '.join(str(invertedAttributeToNumber.get(int(a), a)) for a in toConvert)
+        print(convertedOutput)
+        guiOUT.append(convertedOutput)
+    return str(guiOUT)
+
+
+#######################################################################################################
+## POSSIBILISTIC LOGIC ##
+def setupPossibilisticPreferences():
+    # WE NEED A WAY TO KNOW WHICH PREFERENCE WE ARE WORKING WITH
+    # EACH BUTTON IS LINKED TO A CERTAIN INPUT FILE FOR THIS
+
+    # preference replaces the words in the preference file with their numeric value from attributeToNumber dict
+    # preferences = files[2].split()
+    # conversion = ' '.join(str(attributeToNumber.get(a, a)) for a in preferences)
+    preferenceObjects = str(files[2]).splitlines()
+
+    # each index in array holds the clasp code per line in preference file input
+    # at least that is current goal
+
+    for line in preferenceObjects:
+        words = line.split()
+        newLines = 1
+
+        preferenceconversion = ' '.join(str(attributeToNumber.get(a, a)) for a in words)
+        tempTest = preferenceconversion.split()
+        # print("before")
+        # print(tempTest)
+        for pos in range(len(tempTest)):
+            if tempTest[pos] == 'NOT':
+                # if there's a NOT, multiplies the next element by -1
+                tempTest[pos + 1] = -1 * int(tempTest[pos + 1])
+                tempTest[pos] = " "
+                # ctempTest.pop(pos)
+                continue
+            if tempTest[pos] == 'OR':
+                # if there's an OR, does nothing and just skips
+                tempTest[pos] = " "
+                # tempTest.pop(pos)
+                continue
+            if tempTest[pos] == 'AND':
+                # if there's an AND, we must start a new line in clasp
+                # not sure how yet
+                tempTest[pos] = '0\n'
+                newLines += 1
+                continue
+        # add penalty to list penalty amount
+        penaltyAmount.append(float(tempTest.pop()))
+        # print(penaltyAmount)
+        # print(tempTest)
+        # cnfstring is going to be our input for CLASP
+        booleanVars = len(attributeToNumber) / 2
+        cnfString = "p cnf " + str(int(booleanVars)) + " " + str(newLines) + "\n"
+        for chunk in tempTest:
+            if chunk == "0\n":
+                cnfString += str(chunk)
+            elif chunk == " ":
+                continue
+            else:
+                cnfString += str(chunk) + ' '
+        cnfString = cnfString + '0'
+        # print(cnfString)
+        # add complete clasp string to completePreferences
+        completePreferences.append(cnfString)
+    # print(completePreferences) 
+    # print(penaltyAmount)
+
+
+def runningPossibilisticPreferences():
+    # Start dictionary of feasible objects with a start of zero penalty 
+    totalTolerance = {}
+    for object in hcFeasibleObjects:
+        totalTolerance[object] = 1
+    # print(totalPenalty)
+
+    counter = 0
+    for claspInput in completePreferences:
+
+        cmdInput = claspInput
+        # print(cmdInput)
+        with open("Output.txt", "w") as text_file:
+            text_file.write(str(cmdInput))
+        operatingSys = platform.system()
+        if operatingSys == "Darwin":
+            change = "cd " + ROOT_DIR
+            claspIn = change + "; ./clasp-3.3.2-x86_64-macosx -n 0 Output.txt"
+            claspExecute = subprocess.run(claspIn, stdout=subprocess.PIPE, shell=True, text=True)
+        else:
+            claspIn = os.path.join(ROOT_DIR, 'clasp-3.3.2-win64.exe -n 0 Output.txt')
+            claspExecute = subprocess.run(claspIn, stdout=subprocess.PIPE, text=True)
+        for line in claspExecute.stdout.splitlines():
+            # print(line)
+            if line.startswith('v'):
+                # checks if preference objects are feasible
+                if line in hcFeasibleObjects:
+                    if (1 - penaltyAmount[counter]) < totalTolerance[line]:
+                        totalTolerance[line] = 1 - penaltyAmount[counter]
+                        # print(penaltyAmount[counter])
+                        # print(1.00 - penaltyAmount[counter])
+        counter += 1
+
+    # print(totalPenalty)
+    sortTotalTolerance = sorted(totalTolerance.items(), key=lambda x: x[1])
+    # list of ordered objects from least penalty to most
+    # this will get us the optimal object
+    # print(sortTotalTolerance)
+    omniOptimal = []
+
+    for i in sortTotalTolerance:
+        # print(i[0], i[1])
+        if i[1] == sortTotalTolerance[0][1]:
+            omniOptimal.append(i)
+    # print(omniOptimal)
+
+    for entry in omniOptimal:
+        toConvert = entry[0].split()[1:9]
+        # print(toConvert)
+        # invertedAttributeToNumber = {v: k for k, v in attributeToNumber.items()}
+        invertedAttributeToNumber = dict([(value, key) for key, value in attributeToNumber.items()])
+        # print(invertedAttributeToNumber)
+        convertedOutput = ' '.join(str(invertedAttributeToNumber.get(int(a), a)) for a in toConvert)
+        print(convertedOutput)
+
+
+#######################################################################################################
+## QUALITATIVE CHOICE LOGIC ##
+
+def setupQualitativePreferences():
+    # WE NEED A WAY TO KNOW WHICH PREFERENCE WE ARE WORKING WITH
+    # EACH BUTTON IS LINKED TO A CERTAIN INPUT FILE FOR THIS
+
+    # preference replaces the words in the preference file with their numeric value from attributeToNumber dict
+    # preferences = files[2].split()
+    # conversion = ' '.join(str(attributeToNumber.get(a, a)) for a in preferences)
+    preferenceObjects = str(files[2]).splitlines()
+    totalQualitative = {}
+    for object in hcFeasibleObjects:
+        totalQualitative[object] = []
+    # each index in array holds the clasp code per line in preference file input
+    # at least that is current goal
+
+    for line in preferenceObjects:
+        words = line.split()
+        BTcounter = 0
+
+        preferenceconversion = ' '.join(str(attributeToNumber.get(a, a)) for a in words)
+        getIF = preferenceconversion.split("IF")
+        # print(getIF)
+        IFcase = getIF[-1] # this is the if case for the line
+        # print(len(IFcase))
+        # print(IFcase)
+        chunks = getIF[0].split("BT") # these are the ordered BetterThan for this line
+        # ISSUE WITH BT SEGMENTS THAT HAVE "AND"
+        # print(chunks)
+
+        for item in totalQualitative:
+            if IFcase not in item:
+                # print(IFcase)
+                # print(item)
+                totalQualitative[item].append("inf")
+            else:
+                point = 1
+                for chunk in chunks:
+                    if chunk in item:   # Doesn't work as wanted. Sees 7 in item with -7 in it. Thus not correct logic.
+                        #print(chunk)
+                        #print(item)
+                        totalQualitative[item].append(point)
+                        point += 1
+
+        """
+        for pos in range(len(tempTest)):
+            if tempTest[pos] == 'IF':
+                # if there's a NOT, multiplies the next element by -1
+                # print(ifTest)   # This is to check if the if condition is true
+                ifTest.append(tempTest[pos + 1:])
+                temporary = tempTest[pos + 1:]
+                continue
+            if tempTest[pos] == 'BT':
+                # if there's a NOT, multiplies the next element by -1
+                BTcounter += 1
+                continue"""
+
+
 #######################################################################################################
 # FRONT END #
 #######################################################################################################
-
 window = Tk()
 window.title = "Enter files"
-window.geometry("1000x800")
+window.geometry("270x500")
 #window.eval('tk::PlaceWindow . center')
-
+preferenceFile = 0
 
 def chooseFile():
     Tk().withdraw()  # we don't want a full GUI, so keep the root window from appearing
@@ -34,46 +448,64 @@ def chooseFile():
     # print(lines)
     files.append(str(lines))
 
+def choosePenalty():
+    Tk().withdraw()  # we don't want a full GUI, so keep the root window from appearing
+    filename = askopenfilename()  # show an "Open" dialog box and return the path to the selected file
+    # print("You chose: " + filename)
+    with open(filename) as f:
+        lines = f.read().replace(',', '')
+    # print(lines)
+    files.append(str(lines))
+    global preferenceFile
+    preferenceFile = 1
 
-def preferenceChoice(choice):
-    if choice == 1:
-        return 1
-    if choice == 2:
-        return 2
-    if choice == 3:
-        return 3
+def choosePossibilistic():
+    Tk().withdraw()  # we don't want a full GUI, so keep the root window from appearing
+    filename = askopenfilename()  # show an "Open" dialog box and return the path to the selected file
+    # print("You chose: " + filename)
+    with open(filename) as f:
+        lines = f.read().replace(',', '')
+    # print(lines)
+    files.append(str(lines))
+    global preferenceFile
+    preferenceFile = 2
 
 
-# def done():
-#     operatingSys = platform.system()
-#     setUpAttribute()
-#     if operatingSys == 'Darwin':
-#         macClaspInput()
-#     else:
-#         claspInput()
-#     setupPreferences()
-#     # setupPossibilisticPreferences()
-#     # setupQualitativePreferences()
+def chooseQualitative():
+    Tk().withdraw()  # we don't want a full GUI, so keep the root window from appearing
+    filename = askopenfilename()  # show an "Open" dialog box and return the path to the selected file
+    # print("You chose: " + filename)
+    with open(filename) as f:
+        lines = f.read().replace(',', '')
+    # print(lines)
+    files.append(str(lines))
+    global preferenceFile
+    preferenceFile = 3
 
-#     if operatingSys == 'Darwin':
-#         macRunningPreferences()
-#     else:
-#         runningPreferences()
-#         # runningPossibilisticPreferences()
-#     # displayOut()
 
-#     root = Tk()
-#     root.title('This better work I swear')
-#     root.geometry("500x450")
-#     root.eval('tk::PlaceWindow . center')
+def done():
+    operatingSys = platform.system()
+    setUpAttribute()
 
-#     label = Label(root, text='')
-#     label.pack(pady=20)
+    claspInput()
+    setupPreferences()
+    # setupPossibilisticPreferences()
+    # setupQualitativePreferences()
+    runningPreferences()
+    # runningPossibilisticPreferences()
+    print(preferenceFile)
+    root = Tk()
+    root.title('This better work I swear')
+    root.geometry("500x450")
+    root.eval('tk::PlaceWindow . center')
 
-#     label.config(text=runningPreferences())
+    label = Label(root, text='')
+    label.pack(pady=20)
 
-#     root.mainloop()
-#     # window.destroy()  # if pressed first, then ends whole process
+    label.config(text=runningPreferences())
+
+    root.mainloop()
+    # window.destroy()  # if pressed first, then ends whole process
 
 
 # define image for canvas
@@ -91,9 +523,9 @@ myCanvas.pack(fill="both", expand=True)
 myCanvas.create_image(0, 0, image=newBg)
 
 # add a label to canvas
-myCanvas.create_text(50, 20, text="Constraints", font=("Batang", 10), fill="black")
-myCanvas.create_text(50, 140, text="Preference", font=("Batang", 10), fill="black")
-myCanvas.create_text(63, 300, text="Possible Tasks", font=("Batang", 10), fill="black")
+myCanvas.create_text(50, 20, text="Constraints", font=("Batang", 11), fill="black")
+myCanvas.create_text(50, 140, text="Preference", font=("Batang", 11), fill="black")
+myCanvas.create_text(64, 305, text="Possible Tasks", font=("Batang", 11), fill="black")
 
 # create images and resize them for buttons
 # attributes
@@ -168,6 +600,12 @@ exemplificationButton = Button(window, image=newExemplificationBTN, command=choo
 optimizationButton = Button(window, image=newOptimizationBTN, command=chooseFile, borderwidth=0,highlightthickness=0,border=0)
 omniOptimizationButton = Button(window, image=newOmniOptimizationBTN, command=chooseFile, borderwidth=0,highlightthickness=0,border=0)
 
+
+#temporary
+doneButton = Button(window, text="done",command=done)
+doneButtonWindow = myCanvas.create_window(130, 400, anchor="center", window=doneButton)
+
+
 # creating windows of buttons and adding onto canvas
 attributesButtonWindow = myCanvas.create_window(130,55, anchor="c", window=attributesButton)
 constraintButtonWindow = myCanvas.create_window(130,100, anchor="c", window=constraintButton)
@@ -182,17 +620,17 @@ omniOptimizationButtonWindow = myCanvas.create_window(130,470, anchor="c", windo
 # # add a drop down
 # def selected(event):
 #     # if clicked.get() == "Select attributes file": popup to submit then execute below code
-#     # Browse = Button(window, text="Browse", command=chooseFile)
-#     doneButton = Button(window, text="Done", command=quit)
-#     # myCanvas.create_window(100, 200, anchor="center", window=Browse)
-#     myCanvas.create_window(130, 450, anchor="center", window=doneButton)
-    
+#     Browse = Button(window, text="Browse", command=chooseFile)
+#     doneButton = Button(window, text="Done", command=done)
+#     myCanvas.create_window(100, 200, anchor="center", window=Browse)
+#     myCanvas.create_window(250, 250, anchor="center", window=doneButton)
+
+
 # options = [
 #     "Default",
-#     "Feasibility",
-#     "Exemplification",
-#     "Optimization",
-#     "Omni-optimization"
+#     "Attributes File",
+#     "Hard Constraints File",
+#     "Preference File"
 # ]
 
 # # take in selected val
@@ -207,12 +645,9 @@ omniOptimizationButtonWindow = myCanvas.create_window(130,470, anchor="c", windo
 #     *options,
 #     command=selected
 # )
-# # putting a window for ddl on canvas
-# ddlWindow = myCanvas.create_window(130, 390, anchor="center", window=ddl)
+# putting a window for ddl on canvas
+#ddlWindow = myCanvas.create_window(100, 250, anchor="center", window=ddl)
 
-# new
-def output():
-    messagebox.showinfo(message="This works lol ")
 
 window.mainloop()
 #######################################################################################################
