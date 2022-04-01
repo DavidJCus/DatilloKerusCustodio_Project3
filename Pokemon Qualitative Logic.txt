@@ -1,0 +1,6 @@
+charmander BT fuecoco IF
+squirtle BT lucario IF bulbasaur
+muk AND garchomp BT aggron AND gengar BT fuecoco AND quaxly IF
+machamp BT drapion IF dusknoir
+bulbasaur BT charmander IF
+gengar BT sprigatito IF metagross

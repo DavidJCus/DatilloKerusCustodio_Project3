@@ -1,0 +1,6 @@
+NOT quaxly OR NOT machamp
+NOT fuecoco OR drapion
+dusknoir OR aggron
+NOT machamp OR NOT muk
+NOT dragonite OR squirtle
+garchomp OR bulbasaur

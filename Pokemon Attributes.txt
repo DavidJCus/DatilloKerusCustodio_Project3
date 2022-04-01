@@ -1,0 +1,8 @@
+grass: bulbasaur, sprigatito
+water: squirtle, quaxly
+fire: charmander, fuecoco
+fighting: machamp, lucario
+poison: muk, drapion
+dragon: dragonite, garchomp
+ghost: gengar, dusknoir
+steel: aggron, metagross

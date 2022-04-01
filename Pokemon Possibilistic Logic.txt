@@ -1,0 +1,6 @@
+sprigatito AND lucario, 0.8
+NOT muk AND NOT machamp, 0.1
+gengar OR squirtle, 0.5
+bulbasaur OR NOT aggron, 0.6
+machamp AND metagross OR dragonite AND NOT charmander, 0.7
+quaxly OR NOT fuecoco AND drapion, 0.4
