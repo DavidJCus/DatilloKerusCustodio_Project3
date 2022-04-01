@@ -359,7 +359,7 @@ def runningPossibilisticPreferences():
         if i[1] == sortTotalTolerance[0][1]:
             omniOptimal.append(i)
     # print(omniOptimal)
-
+    guiOUT = []
     for entry in omniOptimal:
         toConvert = entry[0].split()[1:9]
         # print(toConvert)
@@ -368,6 +368,9 @@ def runningPossibilisticPreferences():
         # print(invertedAttributeToNumber)
         convertedOutput = ' '.join(str(invertedAttributeToNumber.get(int(a), a)) for a in toConvert)
         print(convertedOutput)
+        guiOUT.append(convertedOutput)
+    return str(guiOUT)
+
 
 
 #######################################################################################################
@@ -500,9 +503,12 @@ def done():
 
     label = Label(root, text='')
     label.pack(pady=20)
-
-    label.config(text=runningPreferences())
-
+    if preferenceFile == 1:
+        label.config(text=runningPreferences())
+    elif preferenceFile == 2:
+        label.config(text=runningPossibilisticPreferences())
+    elif preferenceFile == 3:
+        label.config(text="Qualitative goes here")
     root.mainloop()
     # window.destroy()  # if pressed first, then ends whole process
 
