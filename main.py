@@ -1,5 +1,4 @@
 from tkinter import *
-from tkinter import messagebox
 from tkinter.filedialog import askopenfilename
 import os
 import subprocess
@@ -7,7 +6,6 @@ import platform
 from PIL import Image, ImageTk
 
 ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
-# claspMacPath = os.path.join(ROOT_DIR, 'clasp-3.3.2-x86_64-macosx')
 completePreferences = []
 penaltyAmount = []
 preference = 0
@@ -103,7 +101,6 @@ def setupHardConstraints():
 
 #######################################################################################################
 def claspInput():
-    # TODO: add mac support here instead of new functions
     cmdInput = setupHardConstraints()
     # the executable for clasp should be in the same place as this program
     with open("Output.txt", "w") as text_file:
@@ -436,9 +433,9 @@ def setupQualitativePreferences():
 #######################################################################################################
 window = Tk()
 window.title = "Enter files"
-window.geometry("270x500")
-#window.eval('tk::PlaceWindow . center')
-preferenceFile = 0
+window.geometry("270x570")
+window.eval('tk::PlaceWindow . center')
+
 
 
 def chooseFile():
@@ -485,17 +482,31 @@ def chooseQualitative():
     preferenceFile = 3
 
 
-def done():
-    operatingSys = platform.system()
-    setUpAttribute()
+def chooseFeasability():
+    global option
+    option = 1
 
+def chooseExemplification():
+    global option
+    option = 2
+
+def chooseOptimization():
+    global option
+    option = 3
+
+def chooseOmni():
+    global option
+    option = 4
+
+
+def done():
+    setUpAttribute()
     claspInput()
     setupPreferences()
     # setupPossibilisticPreferences()
     # setupQualitativePreferences()
     runningPreferences()
     # runningPossibilisticPreferences()
-    print(preferenceFile)
     root = Tk()
     root.title('This better work I swear')
     root.geometry("500x450")
@@ -509,6 +520,8 @@ def done():
         label.config(text=runningPossibilisticPreferences())
     elif preferenceFile == 3:
         label.config(text="Qualitative goes here")
+
+    print(option)
     root.mainloop()
     # window.destroy()  # if pressed first, then ends whole process
 
@@ -536,13 +549,13 @@ myCanvas.create_text(64, 305, text="Possible Tasks", font=("Batang", 11), fill="
 # attributes
 imagePath2 = os.path.join(ROOT_DIR, 'attributesBtn.png')
 attributesImg = Image.open(imagePath2)
-resized2 = attributesImg.resize((268, 38), Image.ANTIALIAS)
+resized2 = attributesImg.resize((270, 50), Image.ANTIALIAS)
 newAttributeBTN = ImageTk.PhotoImage(resized2)
 
 # hard Constraint
 imagePath3 = os.path.join(ROOT_DIR, 'HCBtn.png')
 hardConstraintImg = Image.open(imagePath3)
-resized3 = hardConstraintImg.resize((270, 38), Image.ANTIALIAS)
+resized3 = hardConstraintImg.resize((270, 50), Image.ANTIALIAS)
 newHcBTN = ImageTk.PhotoImage(resized3)
 
 # # browse
@@ -560,96 +573,76 @@ newHcBTN = ImageTk.PhotoImage(resized3)
 # preferences
 imagePath6 = os.path.join(ROOT_DIR, 'PenaltyBtn.png')
 penaltyImg = Image.open(imagePath6)
-resized6 = penaltyImg.resize((270, 38), Image.ANTIALIAS)
+resized6 = penaltyImg.resize((270, 50), Image.ANTIALIAS)
 newPenaltyBTN = ImageTk.PhotoImage(resized6)
 
 imagePath7 = os.path.join(ROOT_DIR, 'possibilisticBtn.png')
 possibilisticImg = Image.open(imagePath7)
-resized7 = possibilisticImg.resize((270, 38), Image.ANTIALIAS)
+resized7 = possibilisticImg.resize((270, 50), Image.ANTIALIAS)
 newPossibilisticBTN = ImageTk.PhotoImage(resized7)
 
 imagePath8 = os.path.join(ROOT_DIR, 'QualitativeBtn.png')
 QualitativeImg = Image.open(imagePath8)
-resized8 = QualitativeImg.resize((270, 38), Image.ANTIALIAS)
+resized8 = QualitativeImg.resize((270, 50), Image.ANTIALIAS)
 newQualitativeBTN = ImageTk.PhotoImage(resized8)
-
-# types
-imagePath9 = os.path.join(ROOT_DIR, 'FeasibilityBtn.png')
-feasibilityImg = Image.open(imagePath9)
-resized9 = feasibilityImg.resize((270, 38), Image.ANTIALIAS)
-newFeasibilityBTN = ImageTk.PhotoImage(resized9)
-
-imagePath10 = os.path.join(ROOT_DIR, 'ExemplificationBtn.png')
-exemplificationImg = Image.open(imagePath10)
-resized10 = exemplificationImg.resize((270, 38), Image.ANTIALIAS)
-newExemplificationBTN = ImageTk.PhotoImage(resized10)
-
-imagePath11 = os.path.join(ROOT_DIR, 'OptimizationBtn.png')
-optimizationImg = Image.open(imagePath11)
-resized11 = optimizationImg.resize((270, 38), Image.ANTIALIAS)
-newOptimizationBTN = ImageTk.PhotoImage(resized11)
-
-imagePath12 = os.path.join(ROOT_DIR, 'Omni-optimizzationBtn.png')
-omniOptimizationImg = Image.open(imagePath12)
-resized12 = omniOptimizationImg.resize((270, 38), Image.ANTIALIAS)
-newOmniOptimizationBTN = ImageTk.PhotoImage(resized12)
 
 # adding needed buttons
 attributesButton = Button(window, image=newAttributeBTN, command=chooseFile, borderwidth=0,highlightthickness=0,border=0)
 constraintButton = Button(window, image=newHcBTN, command=chooseFile, borderwidth=0,highlightthickness=0,border=0)
-PenaltyButton = Button(window, image=newPenaltyBTN, command=chooseFile, borderwidth=0,highlightthickness=0,border=0)
-possibilisticButton = Button(window, image=newPossibilisticBTN, command=chooseFile, borderwidth=0,highlightthickness=0,border=0)
-qualitativeButton = Button(window, image=newQualitativeBTN, command=chooseFile, borderwidth=0,highlightthickness=0,border=0)
-feasibilityButton = Button(window, image=newFeasibilityBTN, command=chooseFile, borderwidth=0,highlightthickness=0,border=0)
-exemplificationButton = Button(window, image=newExemplificationBTN, command=chooseFile, borderwidth=0,highlightthickness=0,border=0)
-optimizationButton = Button(window, image=newOptimizationBTN, command=chooseFile, borderwidth=0,highlightthickness=0,border=0)
-omniOptimizationButton = Button(window, image=newOmniOptimizationBTN, command=chooseFile, borderwidth=0,highlightthickness=0,border=0)
+PenaltyButton = Button(window, image=newPenaltyBTN, command=choosePenalty, borderwidth=0,highlightthickness=0,border=0)
+possibilisticButton = Button(window, image=newPossibilisticBTN, command=choosePossibilistic, borderwidth=0,highlightthickness=0,border=0)
+qualitativeButton = Button(window, image=newQualitativeBTN, command=chooseQualitative, borderwidth=0,highlightthickness=0,border=0)
 
 
-#temporary
-doneButton = Button(window, text="done", command=done)
-doneButtonWindow = myCanvas.create_window(130, 400, anchor="center", window=doneButton)
+#temporary for testing
+doneButton = Button(window, command=done, text="done")
+doneButtonWindow = myCanvas.create_window(130, 550, anchor="center", window=doneButton)
+
+feasabilityButton = Button(window, command=chooseFeasability, text="Choose feasability")
+feasabilityButtonWindow = myCanvas.create_window(130, 390, anchor="center", window=feasabilityButton)
+exemplificationButton = Button(window, command=chooseExemplification, text="Choose exemplification")
+exemplificationButtonWindow = myCanvas.create_window(130, 420, anchor="center", window=exemplificationButton)
+optimizationButton = Button(window, command=chooseOptimization, text="Choose optimization")
+optimizationButtonWindow = myCanvas.create_window(130, 450, anchor="center", window=optimizationButton)
+omniButton = Button(window, command=chooseOmni, text="Choose omnioptimization")
+omniButtonWindow = myCanvas.create_window(130, 480, anchor="center", window=omniButton)
 
 
 # creating windows of buttons and adding onto canvas
-attributesButtonWindow = myCanvas.create_window(130,55, anchor="c", window=attributesButton)
-constraintButtonWindow = myCanvas.create_window(130,100, anchor="c", window=constraintButton)
-penaltyButtonWindow = myCanvas.create_window(130,175, anchor="c", window=PenaltyButton)
-possibilisticButtonWindow = myCanvas.create_window(130,220, anchor="c", window=possibilisticButton)
-qualitativeButtonWindow = myCanvas.create_window(130,265, anchor="c", window=qualitativeButton)
-feasibilityButtonWindow = myCanvas.create_window(130,335, anchor="c", window=feasibilityButton)
-exemplificationButtonWindow = myCanvas.create_window(130,380, anchor="c", window=exemplificationButton)
-optimizationButtonWindow = myCanvas.create_window(130,425, anchor="c", window=optimizationButton)
-omniOptimizationButtonWindow = myCanvas.create_window(130,470, anchor="c", window=omniOptimizationButton)
+attributesButtonWindow = myCanvas.create_window(130,60, anchor="c", window=attributesButton)
+constraintButtonWindow = myCanvas.create_window(130,118, anchor="c", window=constraintButton)
+penaltyButtonWindow = myCanvas.create_window(130,210, anchor="c", window=PenaltyButton)
+possibilisticButtonWindow = myCanvas.create_window(130,270, anchor="c", window=possibilisticButton)
+qualitativeButtonWindow = myCanvas.create_window(130,330, anchor="c", window=qualitativeButton)
 
-# # add a drop down
-# def selected(event):
-#     # if clicked.get() == "Select attributes file": popup to submit then execute below code
-#     Browse = Button(window, text="Browse", command=chooseFile)
-#     doneButton = Button(window, text="Done", command=done)
-#     myCanvas.create_window(100, 200, anchor="center", window=Browse)
-#     myCanvas.create_window(250, 250, anchor="center", window=doneButton)
+# add a drop down
+def selected(event):
+    # if clicked.get() == "Select attributes file": popup to submit then execute below code
+    Browse = Button(window, text="Browse", command=chooseFile)
+    doneButton = Button(window, text="Done", command=done)
+    myCanvas.create_window(100, 200, anchor="center", window=Browse)
+    myCanvas.create_window(250, 250, anchor="center", window=doneButton)
 
 
-# options = [
-#     "Default",
-#     "Attributes File",
-#     "Hard Constraints File",
-#     "Preference File"
-# ]
+options = [
+    "Default",
+    "Attributes File",
+    "Hard Constraints File",
+    "Preference File"
+]
 
-# # take in selected val
-# clicked = StringVar()
-# # set default val
-# clicked.set(options[0])
+# take in selected val
+clicked = StringVar()
+# set default val
+clicked.set(options[0])
 
-# # provide a menu
-# ddl = OptionMenu(
-#     window,
-#     clicked,
-#     *options,
-#     command=selected
-# )
+# provide a menu
+ddl = OptionMenu(
+    window,
+    clicked,
+    *options,
+    command=selected
+)
 # putting a window for ddl on canvas
 #ddlWindow = myCanvas.create_window(100, 250, anchor="center", window=ddl)
 
