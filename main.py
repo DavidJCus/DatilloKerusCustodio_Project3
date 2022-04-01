@@ -436,7 +436,7 @@ window = Tk()
 window.title = "Enter files"
 window.geometry("270x500")
 window.eval('tk::PlaceWindow . center')
-
+preferenceFile = 0
 
 def chooseFile():
     Tk().withdraw()  # we don't want a full GUI, so keep the root window from appearing
@@ -447,14 +447,39 @@ def chooseFile():
     # print(lines)
     files.append(str(lines))
 
+def choosePenalty():
+    Tk().withdraw()  # we don't want a full GUI, so keep the root window from appearing
+    filename = askopenfilename()  # show an "Open" dialog box and return the path to the selected file
+    # print("You chose: " + filename)
+    with open(filename) as f:
+        lines = f.read().replace(',', '')
+    # print(lines)
+    files.append(str(lines))
+    global preferenceFile
+    preferenceFile = 1
 
-def preferenceChoice(choice):
-    if choice == 1:
-        return 1
-    if choice == 2:
-        return 2
-    if choice == 3:
-        return 3
+def choosePossibilistic():
+    Tk().withdraw()  # we don't want a full GUI, so keep the root window from appearing
+    filename = askopenfilename()  # show an "Open" dialog box and return the path to the selected file
+    # print("You chose: " + filename)
+    with open(filename) as f:
+        lines = f.read().replace(',', '')
+    # print(lines)
+    files.append(str(lines))
+    global preferenceFile
+    preferenceFile = 2
+
+
+def chooseQualitative():
+    Tk().withdraw()  # we don't want a full GUI, so keep the root window from appearing
+    filename = askopenfilename()  # show an "Open" dialog box and return the path to the selected file
+    # print("You chose: " + filename)
+    with open(filename) as f:
+        lines = f.read().replace(',', '')
+    # print(lines)
+    files.append(str(lines))
+    global preferenceFile
+    preferenceFile = 3
 
 
 def done():
@@ -467,8 +492,7 @@ def done():
     # setupQualitativePreferences()
     runningPreferences()
     # runningPossibilisticPreferences()
-    # displayOut()
-
+    print(preferenceFile)
     root = Tk()
     root.title('This better work I swear')
     root.geometry("500x450")
@@ -545,9 +569,9 @@ newQualitativeBTN = ImageTk.PhotoImage(resized8)
 # adding needed buttons
 attributesButton = Button(window, image=newAttributeBTN, command=chooseFile, borderwidth=0,highlightthickness=0,border=0)
 constraintButton = Button(window, image=newHcBTN, command=chooseFile, borderwidth=0,highlightthickness=0,border=0)
-PenaltyButton = Button(window, image=newPenaltyBTN, command=chooseFile, borderwidth=0,highlightthickness=0,border=0)
-possibilisticButton = Button(window, image=newPossibilisticBTN, command=chooseFile, borderwidth=0,highlightthickness=0,border=0)
-qualitativeButton = Button(window, image=newQualitativeBTN, command=chooseFile, borderwidth=0,highlightthickness=0,border=0)
+PenaltyButton = Button(window, image=newPenaltyBTN, command=choosePenalty, borderwidth=0,highlightthickness=0,border=0)
+possibilisticButton = Button(window, image=newPossibilisticBTN, command=choosePossibilistic, borderwidth=0,highlightthickness=0,border=0)
+qualitativeButton = Button(window, image=newQualitativeBTN, command=chooseQualitative, borderwidth=0,highlightthickness=0,border=0)
 
 
 #temporary
