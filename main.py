@@ -433,30 +433,54 @@ def setupQualitativePreferences():
     # preferences = files[2].split()
     # conversion = ' '.join(str(attributeToNumber.get(a, a)) for a in preferences)
     preferenceObjects = str(files[2]).splitlines()
-    ifTest = []
+    totalQualitative = {}
+    for object in hcFeasibleObjects:
+        totalQualitative[object] = []
     # each index in array holds the clasp code per line in preference file input
     # at least that is current goal
 
     for line in preferenceObjects:
         words = line.split()
-        newLines = 1
+        BTcounter = 0
 
         preferenceconversion = ' '.join(str(attributeToNumber.get(a, a)) for a in words)
-        tempTest = preferenceconversion.split()
-        print("before")
-        print(tempTest)
+        getIF = preferenceconversion.split("IF")
+        # print(getIF)
+        IFcase = getIF[-1] # this is the if case for the line
+        # print(len(IFcase))
+        # print(IFcase)
+        chunks = getIF[0].split("BT") # these are the ordered BetterThan for this line 
+        # ISSUE WITH BT SEGMENTS THAT HAVE "AND"
+        # print(chunks)
+    
+        for item in totalQualitative:
+            if IFcase not in item:
+                # print(IFcase)
+                # print(item)
+                totalQualitative[item].append("inf")
+            else:
+                point = 1
+                for chunk in chunks:
+                    if chunk in item:   # Doesn't work as wanted. Sees 7 in item with -7 in it. Thus not correct logic.
+                        #print(chunk)
+                        #print(item)
+                        totalQualitative[item].append(point)
+                        point += 1
+
+        """
         for pos in range(len(tempTest)):
             if tempTest[pos] == 'IF':
                 # if there's a NOT, multiplies the next element by -1
-                print(ifTest)   # This is to check if the if condition is true
+                # print(ifTest)   # This is to check if the if condition is true
                 ifTest.append(tempTest[pos + 1:])
+                temporary = tempTest[pos + 1:]
                 continue
-    """
-    This is Vlada's attempt at pseudo code with no working program to run and check
-    We want to split preference objects into chunks using BT as the breaker
+            if tempTest[pos] == 'BT':
+                # if there's a NOT, multiplies the next element by -1
+                BTcounter += 1
+                continue"""
+        
     
-    
-    """
 
 
 #######################################################################################################
@@ -497,6 +521,7 @@ def done():
         claspInput()
     setupPreferences()
     # setupPossibilisticPreferences()
+    # setupQualitativePreferences()
 
     if operatingSys == 'Darwin':
         macRunningPreferences()
