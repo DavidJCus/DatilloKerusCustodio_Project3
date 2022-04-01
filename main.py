@@ -250,7 +250,7 @@ def runningPreferences():
             omniOptimal.append(i)
     # print(omniOptimal)
     for entry in omniOptimal:
-        toConvert = entry[0].split()[1:5]
+        toConvert = entry[0].split()[1:9]
         # print(toConvert)
         # invertedAttributeToNumber = {v: k for k, v in attributeToNumber.items()}
         invertedAttributeToNumber = dict([(value, key) for key, value in attributeToNumber.items()])
@@ -299,7 +299,7 @@ def macRunningPreferences():
             omniOptimal.append(i)
     # print(omniOptimal)
     for entry in omniOptimal:
-        toConvert = entry[0].split()[1:5]
+        toConvert = entry[0].split()[1:9]
         # print(toConvert)
         # invertedAttributeToNumber = {v: k for k, v in attributeToNumber.items()}
         invertedAttributeToNumber = dict([(value, key) for key, value in attributeToNumber.items()])
@@ -413,7 +413,7 @@ def runningPossibilisticPreferences():
     # print(omniOptimal)
 
     for entry in omniOptimal:
-        toConvert = entry[0].split()[1:5]
+        toConvert = entry[0].split()[1:9]
         # print(toConvert)
         # invertedAttributeToNumber = {v: k for k, v in attributeToNumber.items()}
         invertedAttributeToNumber = dict([(value, key) for key, value in attributeToNumber.items()])
@@ -448,8 +448,15 @@ def setupQualitativePreferences():
         for pos in range(len(tempTest)):
             if tempTest[pos] == 'IF':
                 # if there's a NOT, multiplies the next element by -1
+                print(ifTest)   # This is to check if the if condition is true
                 ifTest.append(tempTest[pos + 1:])
                 continue
+    """
+    This is Vlada's attempt at pseudo code with no working program to run and check
+    We want to split preference objects into chunks using BT as the breaker
+    
+    
+    """
 
 
 #######################################################################################################
