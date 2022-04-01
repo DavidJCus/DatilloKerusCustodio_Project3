@@ -521,51 +521,56 @@ def done():
 
 # define image
 imagePath1 = os.path.join(ROOT_DIR, 'GreyBG.png')  # loads images.png no matter where the project is located
-bg = PhotoImage(file=imagePath1)
+bg = Image.open(imagePath1)
+resizedd = bg.resize((530, 1155), Image.ANTIALIAS)
+newBg = ImageTk.PhotoImage(resizedd)
+# bgLabel = Label(image=newAttributeBTN)
 
 # create canvas
-myCanvas = Canvas(window, width=500, height=500)
+myCanvas = Canvas(window, width=500, height=500, borderwidth=0,highlightthickness=0,border=0)
 myCanvas.pack(fill="both", expand=True)
 
 # set image in canvas
-myCanvas.create_image(0, 0, image=bg)
+myCanvas.create_image(0, 0, image=newBg)
 
 # add a label
 myCanvas.create_text(50, 20, text="Constraints", font=("Batang", 11), fill="black")
-myCanvas.create_text(50, 150, text="Preference", font=("Batang", 11), fill="black")
+myCanvas.create_text(50, 170, text="Preference", font=("Batang", 11), fill="black")
 
 # create labels for botton images
 # attributes
 imagePath2 = os.path.join(ROOT_DIR, 'attributesBtn.png')
-attributesImgPIL = Image.open(imagePath2)
-attributesImg = PhotoImage(file=imagePath2)
-# attributeLabel = Label(image=attributesImg)
-resized = attributesImgPIL.resize((100, 100), Image.ANTIALIAS)
-newAttributeBTN = ImageTk.PhotoImage(resized)
-attributeLabel = Label(image=newAttributeBTN)
+attributesImg = Image.open(imagePath2)
+resized2 = attributesImg.resize((270, 50), Image.ANTIALIAS)
+newAttributeBTN = ImageTk.PhotoImage(resized2)
+
 # hard Constraint
-# imagePath3 = os.path.join(ROOT_DIR, 'HCBtn.png')
-# hardConstraintImg = PhotoImage(file=imagePath3)
-# hardConstraintLabel = Label(image=hardConstraintImg)
-# browse
+imagePath3 = os.path.join(ROOT_DIR, 'HCBtn.png')
+hardConstraintImg = Image.open(imagePath3)
+resized3 = hardConstraintImg.resize((270, 60), Image.ANTIALIAS)
+newHcBTN = ImageTk.PhotoImage(resized3)
+
+# # browse
 # imagePath4 = os.path.join(ROOT_DIR, 'browseBtn.png')
-# browseImg = PhotoImage(file=imagePath4)
-# browseLabel = Label(image=browseImg)
-# done
+# browseImg = Image.open(imagePath4)
+# resized = browseImg.resize((270, 50), Image.ANTIALIAS)
+# newAttributeBTN = ImageTk.PhotoImage(resized)
+
+# # done
 # imagePath5 = os.path.join(ROOT_DIR, 'doneBtn.png')
-# doneImg = PhotoImage(file=imagePath5)
-# doneLabel = Label(image=doneImg)
+# doneImg = Image.open(imagePath5)
+# resized = doneImg.resize((270, 50), Image.ANTIALIAS)
+# newAttributeBTN = ImageTk.PhotoImage(resized)
+
 
 # adding needed buttons
-attributesButton = Button(window, image=attributesImg, command=chooseFile)
-
-
-# constraintButton = Button(window, text="Select the hard constraints files", command=chooseFile)
+attributesButton = Button(window, image=newAttributeBTN, command=chooseFile, borderwidth=0,highlightthickness=0,border=0)
+constraintButton = Button(window, image=newHcBTN, command=chooseFile, borderwidth=0,highlightthickness=0,border=0)
 # preferencesButton = Button(window, text="Select the preferences files", command=chooseFile)
 
 # creating windows of buttons and adding onto canvas
-# attributesButtonWindow = myCanvas.create_window(50,50, anchor="c", window=attributesButton)
-# constraintButtonWindow = myCanvas.create_window(350,130, anchor="c", window=constraintButton)
+attributesButtonWindow = myCanvas.create_window(130,60, anchor="c", window=attributesButton)
+constraintButtonWindow = myCanvas.create_window(130,118, anchor="c", window=constraintButton)
 # preferencesButtonWindow = myCanvas.create_window(350,160, anchor="c", window=preferencesButton)
 
 
@@ -598,7 +603,7 @@ ddl = OptionMenu(
     command=selected
 )
 # putting a window on a window
-ddlWindow = myCanvas.create_window(100, 190, anchor="center", window=ddl)
+ddlWindow = myCanvas.create_window(100, 250, anchor="center", window=ddl)
 
 
 # new
