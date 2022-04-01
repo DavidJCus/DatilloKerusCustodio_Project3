@@ -456,7 +456,7 @@ def setupQualitativePreferences():
 
 window = Tk()
 window.title = "Enter files"
-window.geometry("950x300")
+window.geometry("900x500")
 window.eval('tk::PlaceWindow . center')
 
 
@@ -498,47 +498,57 @@ def done():
     # window.destroy()  # if pressed first, then ends whole process
 
 
-# #adding needed buttons
-# attributesButton = Button(window, text="Select attributes file", command=chooseFile)
-# constraintButton = Button(window, text="Select the hard constraints files", command=chooseFile)
-# preferencesButton = Button(window, text="Select the preferences files", command=chooseFile)
-
-# # creating windows of buttons and adding onto canvas
-# attributesButtonWindow = myCanvas.create_window(350,100, anchor="c", window=attributesButton)
-# constraintButtonWindow = myCanvas.create_window(350,130, anchor="c", window=constraintButton)
-# preferencesButtonWindow = myCanvas.create_window(350,160, anchor="c", window=preferencesButton)
-
-
 # define image
-imagePath1 = os.path.join(ROOT_DIR, 'image.png')  # loads images.png no matter where the project is located
-bg1 = PhotoImage(file=imagePath1)
-# imagePath2 = os.path.join(ROOT_DIR, 'greyimage.png')
-# bg2 = PhotoImage(file=imagePath1)
+imagePath1 = os.path.join(ROOT_DIR, 'GreyBG.png')  # loads images.png no matter where the project is located
+bg = PhotoImage(file=imagePath1)
+
 # create canvas
 myCanvas = Canvas(window, width=500, height=500)
 myCanvas.pack(fill="both", expand=True)
-# myCanvas2 = Canvas(window, width=250, height=500)
-# myCanvas2.pack(fill="both", expand=True)
 
 # set image in canvas
-myCanvas.create_image(0, 0, image=bg1)
+myCanvas.create_image(0, 0, image=bg)
 
 # add a label
-myCanvas.create_text(100, 150, text="Choose your item", font=("Bierstadt", 10), fill="white")
-myCanvas.create_text(100, 60, text="Choose your preference logic", font=("Bierstadt", 10), fill="white")
+myCanvas.create_text(50, 20, text="Constraints", font=("Batang", 11), fill="black")
+myCanvas.create_text(50, 150, text="Preference", font=("Batang", 11), fill="black")
 
-# myCanvas.create_text(75, 140, text="Exit", font=("Bierstadt", 10), fill="white")
+# create labels for botton images
+ #attributes
+imagePath2 = os.path.join(ROOT_DIR, 'attributesBtn.png')
+attributesImg = PhotoImage(file=imagePath2)
+attributeLabel = Label(image=attributesImg)
+ #hard Constraint
+# imagePath3 = os.path.join(ROOT_DIR, 'HCBtn.png')
+# hardConstraintImg = PhotoImage(file=imagePath3)
+# hardConstraintLabel = Label(image=hardConstraintImg)
+ #browse
+# imagePath4 = os.path.join(ROOT_DIR, 'browseBtn.png')
+# browseImg = PhotoImage(file=imagePath4)
+# browseLabel = Label(image=browseImg)
+ #done
+# imagePath5 = os.path.join(ROOT_DIR, 'doneBtn.png')
+# doneImg = PhotoImage(file=imagePath5)
+# doneLabel = Label(image=doneImg)
 
+# adding needed buttons
+attributesButton = Button(window, image=attributesImg, command=chooseFile)
+# constraintButton = Button(window, text="Select the hard constraints files", command=chooseFile)
+# preferencesButton = Button(window, text="Select the preferences files", command=chooseFile)
+
+# creating windows of buttons and adding onto canvas
+# attributesButtonWindow = myCanvas.create_window(50,50, anchor="c", window=attributesButton)
+# constraintButtonWindow = myCanvas.create_window(350,130, anchor="c", window=constraintButton)
+# preferencesButtonWindow = myCanvas.create_window(350,160, anchor="c", window=preferencesButton)
+
+#new
 output = Entry(window)
 myCanvas.create_window(712, 150, anchor="center", height=300, width=475, window=output)
-
-
+#new
 def displayOut():
     output.insert(0, runningPreferences())
 
-
 # add a drop down
-
 def selected(event):
     # if clicked.get() == "Select attributes file": popup to submit then execute below code
     Browse = Button(window, text="Browse", command=chooseFile)
@@ -553,6 +563,7 @@ options = [
     "Hard Constraints File",
     "Preference File"
 ]
+
 # take in selected val
 clicked = StringVar()
 # set default val
@@ -566,21 +577,11 @@ ddl = OptionMenu(
     command=selected
 )
 # putting a window on a window
-ddlWindow = myCanvas.create_window(100, 170, anchor="center", window=ddl)
+ddlWindow = myCanvas.create_window(100, 190, anchor="center", window=ddl)
 
+# new
 def output():
     messagebox.showinfo(message="This works lol ")
-"""
-# this seems to be working
-attributesButton = Button(window, text="Select attributes file", command=chooseFile)
-attributesButton.pack()
-constraintButton = Button(window, text="Select the hard constraints files", command=chooseFile)
-constraintButton.pack()
-preferencesButton = Button(window, text="Select the preferences files", command=chooseFile)
-preferencesButton.pack()
-endButton = Button(window, text="Done", command=done)
-endButton.pack(pady=20)
-"""
 
 window.mainloop()
 #######################################################################################################
