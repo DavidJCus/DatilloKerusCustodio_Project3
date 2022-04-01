@@ -109,9 +109,16 @@ def claspInput():
     # the executable for clasp should be in the same place as this program
     with open("Output.txt", "w") as text_file:
         text_file.write(str(cmdInput))
-    claspIn = os.path.join(ROOT_DIR, 'clasp-3.3.2-win64.exe -n 0 Output.txt')
+    operatingSys = platform.system()
+    if operatingSys == "Darwin":
+        change = "cd " + ROOT_DIR
+        claspIn = change + "; ./clasp-3.3.2-x86_64-macosx -n 0 Output.txt"
+        claspExecute = subprocess.run(claspIn, stdout=subprocess.PIPE, shell=True, text=True)
+    else:
+        claspIn = os.path.join(ROOT_DIR, 'clasp-3.3.2-win64.exe -n 0 Output.txt')
+        claspExecute = subprocess.run(claspIn, stdout=subprocess.PIPE, text=True)
     # print(claspIn)
-    claspExecute = subprocess.run(claspIn, stdout=subprocess.PIPE, text=True)
+
     # print(claspExecute.stdout)
     # print("executed")
     for line in claspExecute.stdout.splitlines():
@@ -128,26 +135,6 @@ def claspInput():
         elif line.startswith('v'):
             hcFeasibleObjects.append(line)
     # print(hcFeasibleObjects)
-
-
-def macClaspInput():
-    cmdInput = setupHardConstraints()
-    # the executable for clasp should be in the same place as this program
-    with open("Output.txt", "w") as text_file:
-        text_file.write(str(cmdInput))
-    change = "cd " + ROOT_DIR
-    claspIn = change + "; ./clasp-3.3.2-x86_64-macosx -n 0 Output.txt"
-    claspExecute = subprocess.run(claspIn, stdout=subprocess.PIPE, shell=True, text=True)
-    for line in claspExecute.stdout.splitlines():
-        # print(line)
-        if line.__contains__('SATISFIABLE'):
-            print("Returned Satisfiable")
-        elif line.__contains__('UNSATISFIABLE'):
-            print("Returned Unsatisfiable")
-        elif line.__contains__('UNKNOWN'):
-            print("Returned Unknown")
-        elif line.startswith('v'):
-            hcFeasibleObjects.append(line)
 
 
 #######################################################################################################
@@ -220,14 +207,18 @@ def runningPreferences():
 
     counter = 0
     for claspInput in completePreferences:
-
+        operatingSys = platform.system()
         cmdInput = claspInput
         # print(cmdInput)
         with open("Output.txt", "w") as text_file:
             text_file.write(str(cmdInput))
-        claspIn = os.path.join(ROOT_DIR, 'clasp-3.3.2-win64.exe -n 0 Output.txt')
-        # print(claspIn)
-        claspExecute = subprocess.run(claspIn, stdout=subprocess.PIPE, text=True)
+        if operatingSys == "Darwin":
+            change = "cd " + ROOT_DIR
+            claspIn = change + "; ./clasp-3.3.2-x86_64-macosx -n 0 Output.txt"
+            claspExecute = subprocess.run(claspIn, stdout=subprocess.PIPE, shell=True, text=True)
+        else:
+            claspIn = os.path.join(ROOT_DIR, 'clasp-3.3.2-win64.exe -n 0 Output.txt')
+            claspExecute = subprocess.run(claspIn, stdout=subprocess.PIPE, text=True)
         for line in claspExecute.stdout.splitlines():
             # print(line)
             if line.startswith('v'):
@@ -259,54 +250,6 @@ def runningPreferences():
         print(convertedOutput)
         guiOUT.append(convertedOutput)
     return str(guiOUT)
-
-
-def macRunningPreferences():
-    # Start dictionary of feasible objects with a start of zero penalty
-    totalPenalty = {}
-    for object in hcFeasibleObjects:
-        totalPenalty[object] = 0
-    # print(totalPenalty)
-
-    counter = 0
-    for claspInput in completePreferences:
-
-        cmdInput = claspInput
-        with open("Output.txt", "w") as text_file:
-            text_file.write(str(cmdInput))
-        change = "cd " + ROOT_DIR
-        claspIn = change + "; ./clasp-3.3.2-x86_64-macosx -n 0 Output.txt"
-        claspExecute = subprocess.run(claspIn, stdout=subprocess.PIPE, text=True)
-        for line in claspExecute.stdout.splitlines():
-            # print(line)
-            if line.startswith('v'):
-                # checks if preference objects are feasible
-                if line in hcFeasibleObjects:
-                    totalPenalty[line] += penaltyAmount[counter]
-        counter += 1
-
-        # print(totalPenalty)
-    sortTotalPenalty = sorted(totalPenalty.items(), key=lambda x: x[1])
-    # list of ordered objects from least penalty to most
-    # this will get us the optimal object
-
-    # print(sortTotalPenalty)
-    omniOptimal = []
-
-    for i in sortTotalPenalty:
-        # print(i[0], i[1])
-        if i[1] == sortTotalPenalty[0][1]:
-            omniOptimal.append(i)
-    # print(omniOptimal)
-    for entry in omniOptimal:
-        toConvert = entry[0].split()[1:9]
-        # print(toConvert)
-        # invertedAttributeToNumber = {v: k for k, v in attributeToNumber.items()}
-        invertedAttributeToNumber = dict([(value, key) for key, value in attributeToNumber.items()])
-        # print(invertedAttributeToNumber)
-        convertedOutput = ' '.join(str(invertedAttributeToNumber.get(int(a), a)) for a in toConvert)
-        print(convertedOutput)
-        return convertedOutput
 
 
 #######################################################################################################
@@ -385,9 +328,14 @@ def runningPossibilisticPreferences():
         # print(cmdInput)
         with open("Output.txt", "w") as text_file:
             text_file.write(str(cmdInput))
-        claspIn = os.path.join(ROOT_DIR, 'clasp-3.3.2-win64.exe -n 0 Output.txt')
-        # print(claspIn)
-        claspExecute = subprocess.run(claspIn, stdout=subprocess.PIPE, text=True)
+        operatingSys = platform.system()
+        if operatingSys == "Darwin":
+            change = "cd " + ROOT_DIR
+            claspIn = change + "; ./clasp-3.3.2-x86_64-macosx -n 0 Output.txt"
+            claspExecute = subprocess.run(claspIn, stdout=subprocess.PIPE, shell=True, text=True)
+        else:
+            claspIn = os.path.join(ROOT_DIR, 'clasp-3.3.2-win64.exe -n 0 Output.txt')
+            claspExecute = subprocess.run(claspIn, stdout=subprocess.PIPE, text=True)
         for line in claspExecute.stdout.splitlines():
             # print(line)
             if line.startswith('v'):
@@ -449,10 +397,10 @@ def setupQualitativePreferences():
         IFcase = getIF[-1] # this is the if case for the line
         # print(len(IFcase))
         # print(IFcase)
-        chunks = getIF[0].split("BT") # these are the ordered BetterThan for this line 
+        chunks = getIF[0].split("BT") # these are the ordered BetterThan for this line
         # ISSUE WITH BT SEGMENTS THAT HAVE "AND"
         # print(chunks)
-    
+
         for item in totalQualitative:
             if IFcase not in item:
                 # print(IFcase)
@@ -479,17 +427,14 @@ def setupQualitativePreferences():
                 # if there's a NOT, multiplies the next element by -1
                 BTcounter += 1
                 continue"""
-        
-    
 
 
 #######################################################################################################
 # FRONT END #
 #######################################################################################################
-
 window = Tk()
 window.title = "Enter files"
-window.geometry("900x500")
+window.geometry("270x500")
 window.eval('tk::PlaceWindow . center')
 
 
@@ -515,19 +460,13 @@ def preferenceChoice(choice):
 def done():
     operatingSys = platform.system()
     setUpAttribute()
-    if operatingSys == 'Darwin':
-        macClaspInput()
-    else:
-        claspInput()
+
+    claspInput()
     setupPreferences()
     # setupPossibilisticPreferences()
     # setupQualitativePreferences()
-
-    if operatingSys == 'Darwin':
-        macRunningPreferences()
-    else:
-        runningPreferences()
-        # runningPossibilisticPreferences()
+    runningPreferences()
+    # runningPossibilisticPreferences()
     # displayOut()
 
     root = Tk()
@@ -610,6 +549,12 @@ PenaltyButton = Button(window, image=newPenaltyBTN, command=chooseFile, borderwi
 possibilisticButton = Button(window, image=newPossibilisticBTN, command=chooseFile, borderwidth=0,highlightthickness=0,border=0)
 qualitativeButton = Button(window, image=newQualitativeBTN, command=chooseFile, borderwidth=0,highlightthickness=0,border=0)
 
+
+#temporary
+doneButton = Button(window, command=done)
+doneButtonWindow = myCanvas.create_window(130, 400, anchor="center", window=doneButton)
+
+
 # creating windows of buttons and adding onto canvas
 attributesButtonWindow = myCanvas.create_window(130,60, anchor="c", window=attributesButton)
 constraintButtonWindow = myCanvas.create_window(130,118, anchor="c", window=constraintButton)
@@ -647,11 +592,6 @@ ddl = OptionMenu(
 )
 # putting a window for ddl on canvas
 #ddlWindow = myCanvas.create_window(100, 250, anchor="center", window=ddl)
-
-
-# new
-def output():
-    messagebox.showinfo(message="This works lol ")
 
 
 window.mainloop()
