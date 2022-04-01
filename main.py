@@ -1,5 +1,4 @@
 from tkinter import *
-from tkinter import messagebox
 from tkinter.filedialog import askopenfilename
 import os
 import subprocess
@@ -7,7 +6,6 @@ import platform
 from PIL import Image, ImageTk
 
 ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
-# claspMacPath = os.path.join(ROOT_DIR, 'clasp-3.3.2-x86_64-macosx')
 completePreferences = []
 penaltyAmount = []
 preference = 0
@@ -15,6 +13,9 @@ preference = 0
 files = []  # Holds the content of opened files
 attributeToNumber = {}  # Dictionary mapping words in atributes file to numbers for CLASP input
 hcFeasibleObjects = []
+
+option = 0
+preferenceFile = 0
 
 
 #######################################################################################################
@@ -104,7 +105,6 @@ def setupHardConstraints():
 
 #######################################################################################################
 def claspInput():
-    # TODO: add mac support here instead of new functions
     cmdInput = setupHardConstraints()
     # the executable for clasp should be in the same place as this program
     with open("Output.txt", "w") as text_file:
@@ -439,7 +439,7 @@ window = Tk()
 window.title = "Enter files"
 window.geometry("270x570")
 window.eval('tk::PlaceWindow . center')
-preferenceFile = 0
+
 
 def chooseFile():
     Tk().withdraw()  # we don't want a full GUI, so keep the root window from appearing
@@ -484,7 +484,6 @@ def chooseQualitative():
     global preferenceFile
     preferenceFile = 3
 
-option = 0
 
 def chooseFeasability():
     global option
