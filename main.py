@@ -594,11 +594,11 @@ newHcBTN = ImageTk.PhotoImage(resized3)
 # resized = browseImg.resize((270, 50), Image.ANTIALIAS)
 # newAttributeBTN = ImageTk.PhotoImage(resized)
 
-# # done
-# imagePath5 = os.path.join(ROOT_DIR, 'doneBtn.png')
-# doneImg = Image.open(imagePath5)
-# resized = doneImg.resize((270, 50), Image.ANTIALIAS)
-# newAttributeBTN = ImageTk.PhotoImage(resized)
+# done
+imagePath5 = os.path.join(ROOT_DIR, 'doneBtn.png')
+doneImg = Image.open(imagePath5)
+resized = doneImg.resize((200, 38), Image.ANTIALIAS)
+newDoneBTN = ImageTk.PhotoImage(resized)
 
 # preferences
 imagePath6 = os.path.join(ROOT_DIR, 'PenaltyBtn.png')
@@ -649,8 +649,8 @@ optimizationButton = Button(window,image=newOptimizationBTN, command=chooseOptim
 omniOptimizationButton = Button(window, image=newOmniOptimizationBTN,command=chooseOmni, borderwidth=0,highlightthickness=0,border=0)
 
 #temporary for testing
-doneButton = Button(window, command=done, text="done")
-doneButtonWindow = myCanvas.create_window(130, 520, anchor="center", window=doneButton)
+doneButton = Button(window, command=done,image=newDoneBTN,borderwidth=0,highlightthickness=0,border=0)# text="done")
+doneButtonWindow = myCanvas.create_window(130, 530, anchor="center", window=doneButton)
 
 # creating windows of buttons and adding onto canvas
 attributesButtonWindow = myCanvas.create_window(130,55, anchor="c", window=attributesButton)
