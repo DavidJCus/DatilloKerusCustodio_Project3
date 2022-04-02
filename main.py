@@ -258,7 +258,7 @@ def runningPreferences(value):
             return string
     if value == 2:
 
-    return str(guiOUT)
+        return str(guiOUT)
 
 
 #######################################################################################################
