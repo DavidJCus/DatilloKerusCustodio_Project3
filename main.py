@@ -258,6 +258,7 @@ def runningPreferences(value):
     print(random2[1])
 
     if value == 1:
+        print("Give feasable")
         if len(hcFeasibleObjects) == 0:
             string = "No"
             return string
@@ -265,6 +266,7 @@ def runningPreferences(value):
             string = "Yes"
             return string
     if value == 2:
+        print("Value 2")
         if random1[1] < random2[1]:
             string = "random 1 is better"
             return string
@@ -274,8 +276,12 @@ def runningPreferences(value):
         else:
             string = "they are equal"
             return string
-
-    return str(guiOUT)
+    if value == 3:
+        print("Value 3")
+        return guiOUT[0]
+    if value == 4:
+        print("value 4")
+        return guiOUT
 
 
 #######################################################################################################
@@ -340,7 +346,7 @@ def setupPossibilisticPreferences():
     # print(penaltyAmount)
 
 
-def runningPossibilisticPreferences():
+def runningPossibilisticPreferences(value):
     # Start dictionary of feasible objects with a start of zero penalty 
     totalTolerance = {}
     for object in hcFeasibleObjects:
@@ -395,7 +401,34 @@ def runningPossibilisticPreferences():
         convertedOutput = ' '.join(str(invertedAttributeToNumber.get(int(a), a)) for a in toConvert)
         print(convertedOutput)
         guiOUT.append(convertedOutput)
-    return str(guiOUT)
+
+    random1 = random.choice(sortTotalTolerance)
+    random2 = random.choice(sortTotalTolerance)
+    if value == 1:
+        print("Give feasable")
+        if len(hcFeasibleObjects) == 0:
+            string = "No"
+            return string
+        else:
+            string = "Yes"
+            return string
+    if value == 2:
+        print("Value 2")
+        if random1[1] < random2[1]:
+            string = "random 1 is better"
+            return string
+        elif random1[1] > random2[1]:
+            string = "random 2 is better"
+            return string
+        else:
+            string = "they are equal"
+            return string
+    if value == 3:
+        print("Value 3")
+        return guiOUT[0]
+    if value == 4:
+        print("value 4")
+        return guiOUT
 
 
 
@@ -533,21 +566,22 @@ def done():
     setUpAttribute()
     claspInput()
     setupPreferences()
+
     # setupPossibilisticPreferences()
     # setupQualitativePreferences()
-    runningPreferences()
+    runningPreferences(option)
     # runningPossibilisticPreferences()
     root = Tk()
-    root.title('This better work I swear')
+    root.title('Output')
     root.geometry("500x450")
     root.eval('tk::PlaceWindow . center')
 
     label = Label(root, text='')
     label.pack(pady=20)
     if preferenceFile == 1:
-        label.config(text=runningPreferences())
+        label.config(text=runningPreferences(option))
     elif preferenceFile == 2:
-        label.config(text=runningPossibilisticPreferences())
+        label.config(text=runningPossibilisticPreferences(option))
     elif preferenceFile == 3:
         label.config(text="Qualitative goes here")
 
