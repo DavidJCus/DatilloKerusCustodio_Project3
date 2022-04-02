@@ -605,7 +605,7 @@ def done():
     elif preferenceFile == 2:
         label.config(text=runningPossibilisticPreferences(option))
     elif preferenceFile == 3:
-        label.config(text="Qualitative goes here")
+        label.config(text=setupQualitativePreferences(option))
 
     print(option)
     root.mainloop()
