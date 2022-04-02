@@ -268,10 +268,10 @@ def runningPreferences(value):
     if value == 2:
         print("Value 2")
         if random1[1] < random2[1]:
-            string = "random 1 is better"
+            string = random1 + " is better than " + random2
             return string
         elif random1[1] > random2[1]:
-            string = "random 2 is better"
+            string = random2 + " is better than " + random1
             return string
         else:
             string = "they are equal"
@@ -415,13 +415,13 @@ def runningPossibilisticPreferences(value):
     if value == 2:
         print("Value 2")
         if random1[1] < random2[1]:
-            string = "random 1 is better"
+            string = random2 + " is better than " + random1
             return string
         elif random1[1] > random2[1]:
-            string = "random 2 is better"
+            string = random1 + " is better than " + random2
             return string
         else:
-            string = "they are equal"
+            string = "They are equal"
             return string
     if value == 3:
         print("Value 3")
