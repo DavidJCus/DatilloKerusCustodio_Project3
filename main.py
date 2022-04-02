@@ -3,6 +3,7 @@ from tkinter.filedialog import askopenfilename
 import os
 import subprocess
 import platform
+import random
 from PIL import Image, ImageTk
 
 ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -249,6 +250,13 @@ def runningPreferences(value):
         print(convertedOutput)
         guiOUT.append(convertedOutput)
 
+    random1 = random.choice(sortTotalPenalty)
+    random2 = random.choice(sortTotalPenalty)
+    print(random1)
+    print(random1[1])
+    print(random2)
+    print(random2[1])
+
     if value == 1:
         if len(hcFeasibleObjects) == 0:
             string = "No"
@@ -257,6 +265,15 @@ def runningPreferences(value):
             string = "Yes"
             return string
     if value == 2:
+        if random1[1] < random2[1]:
+            string = "random 1 is better"
+            return string
+        elif random1[1] > random2[1]:
+            string = "random 2 is better"
+            return string
+        else:
+            string = "they are equal"
+            return string
 
     return str(guiOUT)
 
