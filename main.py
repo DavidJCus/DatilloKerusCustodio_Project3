@@ -462,23 +462,25 @@ def setupQualitativePreferences(value):
 
         for item in totalQualitative:
             if IFcase not in item:
-                print(IFcase)
-                print(item)
+                #print(IFcase)
+                #print(item)
                 totalQualitative[item].append("inf")
             else:
                 point = 1
                 for chunk in chunks:
                     if chunk in item:   # Doesn't work as wanted. Sees 7 in item with -7 in it. Thus not correct logic.
-                        print(chunk)
-                        print(item)
+                        #print(chunk)
+                        #print(item)
                         totalQualitative[item].append(point)
                         point += 1
         #print(totalQualitative)
     
 
     guiOUT = []
-    random1 = random.choice(totalQualitative)
-    random2 = random.choice(totalQualitative)
+    random1 = random.choice(list(totalQualitative.keys()))
+    #ran1 = totalQualitative[random1]
+    random2 = random.choice(list(totalQualitative.keys()))
+    #ran2 = totalQualitative[random2]
     guiOUT.append(random1)
     
 
@@ -507,7 +509,6 @@ def setupQualitativePreferences(value):
     if value == 4:
         print("value 4")
         guiOUT.append(random2)
-        guiOUT.append(random1)
         return guiOUT
 
 
