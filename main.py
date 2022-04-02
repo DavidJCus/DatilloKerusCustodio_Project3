@@ -275,7 +275,7 @@ def runningPreferences(value):
             string = "they are equal"
             return string
 
-        return str(guiOUT)
+    return str(guiOUT)
 
 
 #######################################################################################################
