@@ -565,11 +565,13 @@ def chooseOmni():
 def done():
     setUpAttribute()
     claspInput()
-    setupPreferences()
+    if preferenceFile == 1:
+        setupPreferences()
+    elif preferenceFile == 2:
+        setupPossibilisticPreferences()
 
     # setupPossibilisticPreferences()
     # setupQualitativePreferences()
-    runningPreferences(option)
     # runningPossibilisticPreferences()
     root = Tk()
     root.title('Output')
