@@ -14,6 +14,9 @@ files = []  # Holds the content of opened files
 attributeToNumber = {}  # Dictionary mapping words in atributes file to numbers for CLASP input
 hcFeasibleObjects = []
 
+option = 0
+preferenceFile = 0
+
 #######################################################################################################
 def setUpAttribute():
     attributes = files[0].split()
@@ -194,7 +197,7 @@ def setupPreferences():
     # print(penaltyAmount)
 
 
-def runningPreferences():
+def runningPreferences(value):
     # Start dictionary of feasible objects with a start of zero penalty 
     totalPenalty = {}
     for object in hcFeasibleObjects:
@@ -245,6 +248,16 @@ def runningPreferences():
         convertedOutput = ' '.join(str(invertedAttributeToNumber.get(int(a), a)) for a in toConvert)
         print(convertedOutput)
         guiOUT.append(convertedOutput)
+
+    if value == 1:
+        if len(hcFeasibleObjects) == 0:
+            string = "No"
+            return string
+        else:
+            string = "Yes"
+            return string
+    if value == 2:
+
     return str(guiOUT)
 
 
