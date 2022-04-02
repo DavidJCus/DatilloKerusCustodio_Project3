@@ -556,7 +556,7 @@ myCanvas.create_image(0, 0, image=newBg)
 # add a label to canvas
 myCanvas.create_text(50, 20, text="Constraints", font=("Batang", 11), fill="black")
 myCanvas.create_text(50, 140, text="Preference", font=("Batang", 11), fill="black")
-myCanvas.create_text(64, 305, text="Possible Tasks", font=("Batang", 10), fill="black")
+myCanvas.create_text(64, 305, text="Possible Tasks", font=("Batang", 11), fill="black")
 
 # create images and resize them for buttons
 # attributes
