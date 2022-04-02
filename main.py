@@ -572,7 +572,7 @@ def done():
     runningPreferences(option)
     # runningPossibilisticPreferences()
     root = Tk()
-    root.title('This better work I swear')
+    root.title('Output')
     root.geometry("500x450")
     root.eval('tk::PlaceWindow . center')
 
