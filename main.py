@@ -249,6 +249,7 @@ def runningPreferences(value):
         convertedOutput = ' '.join(str(invertedAttributeToNumber.get(int(a), a)) for a in toConvert)
         print(convertedOutput)
         guiOUT.append(convertedOutput)
+        guiOUT.append('\n')
 
     random1 = random.choice(sortTotalPenalty)
     random2 = random.choice(sortTotalPenalty)
@@ -401,6 +402,7 @@ def runningPossibilisticPreferences(value):
         convertedOutput = ' '.join(str(invertedAttributeToNumber.get(int(a), a)) for a in toConvert)
         print(convertedOutput)
         guiOUT.append(convertedOutput)
+        guiOUT.append('\n')
 
     random1 = random.choice(sortTotalTolerance)
     random2 = random.choice(sortTotalTolerance)
