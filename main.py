@@ -566,6 +566,7 @@ def done():
     setUpAttribute()
     claspInput()
     setupPreferences()
+
     # setupPossibilisticPreferences()
     # setupQualitativePreferences()
     runningPreferences(option)
