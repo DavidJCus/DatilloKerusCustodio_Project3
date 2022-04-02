@@ -434,10 +434,7 @@ def runningPossibilisticPreferences(value):
 
 #######################################################################################################
 ## QUALITATIVE CHOICE LOGIC ##
-
-def setupQualitativePreferences():
-    # WE NEED A WAY TO KNOW WHICH PREFERENCE WE ARE WORKING WITH
-    # EACH BUTTON IS LINKED TO A CERTAIN INPUT FILE FOR THIS
+def setupQualitativePreferences(value):
 
     # preference replaces the words in the preference file with their numeric value from attributeToNumber dict
     # preferences = files[2].split()
@@ -465,30 +462,53 @@ def setupQualitativePreferences():
 
         for item in totalQualitative:
             if IFcase not in item:
-                # print(IFcase)
-                # print(item)
+                print(IFcase)
+                print(item)
                 totalQualitative[item].append("inf")
             else:
                 point = 1
                 for chunk in chunks:
                     if chunk in item:   # Doesn't work as wanted. Sees 7 in item with -7 in it. Thus not correct logic.
-                        #print(chunk)
-                        #print(item)
+                        print(chunk)
+                        print(item)
                         totalQualitative[item].append(point)
                         point += 1
+        #print(totalQualitative)
+    
 
-        """
-        for pos in range(len(tempTest)):
-            if tempTest[pos] == 'IF':
-                # if there's a NOT, multiplies the next element by -1
-                # print(ifTest)   # This is to check if the if condition is true
-                ifTest.append(tempTest[pos + 1:])
-                temporary = tempTest[pos + 1:]
-                continue
-            if tempTest[pos] == 'BT':
-                # if there's a NOT, multiplies the next element by -1
-                BTcounter += 1
-                continue"""
+    guiOUT = []
+    random1 = random.choice(totalQualitative)
+    random2 = random.choice(totalQualitative)
+    guiOUT.append(random1)
+    
+
+    if value == 1:
+        print("Give feasable")
+        if len(hcFeasibleObjects) == 0:
+            string = "No"
+            return string
+        else:
+            string = "Yes"
+            return string
+    if value == 2:
+        print("Value 2")
+        if random1[1] < random2[1]:
+            string = "random 1 is better"
+            return string
+        elif random1[1] > random2[1]:
+            string = "random 2 is better"
+            return string
+        else:
+            string = "they are equal"
+            return string
+    if value == 3:
+        print("Value 3")
+        return guiOUT
+    if value == 4:
+        print("value 4")
+        guiOUT.append(random2)
+        guiOUT.append(random1)
+        return guiOUT
 
 
 #######################################################################################################
