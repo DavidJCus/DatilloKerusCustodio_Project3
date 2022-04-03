@@ -1,3 +1,4 @@
+import sys
 from tkinter import *
 from tkinter.filedialog import askopenfilename
 import os
@@ -18,18 +19,15 @@ hcFeasibleObjects = []
 option = 0
 preferenceFile = 0
 
+
 #######################################################################################################
 def setUpAttribute():
     attributes = files[0].split()
-    # print(attributes)
     totalNumberOfAttributes = int(len(attributes) / 3)
     for a in range(1, totalNumberOfAttributes + 1):
         # assigning numbers to attributes. Either x or -x
         attributeToNumber[attributes[(a * 3 - 2)]] = a
         attributeToNumber[attributes[(a * 3 - 1)]] = -1 * a
-        # print(attributes[(a*3-2)])
-        # print(attributes[(a*3-1)])
-    # print(attributeToNumber)
     return attributeToNumber
 
 
@@ -38,8 +36,6 @@ def setupHardConstraints():
     # conversion replaces the words in the hard constraints file with their numeric value from attributeToNumber dict
     constraints = files[1].split()
     conversion = ' '.join(str(attributeToNumber.get(a, a)) for a in constraints)
-    # print(constraints)
-    # print(conversion)
 
     newNumbers = []  # this will store an array of the numbers we get after computing though the NOTs and ORs
     conversionSplit = conversion.split()
@@ -70,8 +66,6 @@ def setupHardConstraints():
             newNumbers.append(int(conversionSplit[b]))
 
     newNumbers.append(0)  # adds a 0 to the last line
-    # print(conversionSplit)
-    # print(newNumbers)
 
     """
     # this gets the unique attributes for the first line of CLASP CNF input
@@ -99,7 +93,6 @@ def setupHardConstraints():
         finalString += str(newNumbers[num]) + " "
         if num == num2:
             finalString += str(newNumbers[num])
-    # print(finalString)
     return finalString
 
 
@@ -117,20 +110,17 @@ def claspInput():
     else:
         claspIn = os.path.join(ROOT_DIR, 'clasp-3.3.2-win64.exe -n 0 Output.txt')
         claspExecute = subprocess.run(claspIn, stdout=subprocess.PIPE, text=True)
-    # print(claspIn)
 
-    # print(claspExecute.stdout)
-    # print("executed")
     for line in claspExecute.stdout.splitlines():
-        # print(line)
         if line.__contains__('SATISFIABLE'):
-            print("Returned Satisfiable")
+            # print("Returned Satisfiable")
             # return 1
+            continue
         elif line.__contains__('UNSATISFIABLE'):
-            print("Returned Unsatisfiable")
+            continue
             # return 0
         elif line.__contains__('UNKNOWN'):
-            print("Returned Unknown")
+            continue
             # return 2
         elif line.startswith('v'):
             hcFeasibleObjects.append(line)
@@ -157,8 +147,6 @@ def setupPreferences():
 
         preferenceconversion = ' '.join(str(attributeToNumber.get(a, a)) for a in words)
         tempTest = preferenceconversion.split()
-        # print("before")
-        # print(tempTest)
         for pos in range(len(tempTest)):
             if tempTest[pos] == 'NOT':
                 # if there's a NOT, multiplies the next element by -1
@@ -179,7 +167,6 @@ def setupPreferences():
                 continue
         # add penalty to list penalty amount
         penaltyAmount.append(int(tempTest.pop()))
-        # print(tempTest)
         # cnfstring is going to be our input for CLASP
         booleanVars = len(attributeToNumber) / 2
         cnfString = "p cnf " + str(int(booleanVars)) + " " + str(newLines) + "\n"
@@ -191,11 +178,8 @@ def setupPreferences():
             else:
                 cnfString += str(chunk) + ' '
         cnfString = cnfString + '0'
-        # print(cnfString)
         # add complete clasp string to completePreferences
         completePreferences.append(cnfString)
-    # print(completePreferences) 
-    # print(penaltyAmount)
 
 
 def runningPreferences(value):
@@ -203,13 +187,11 @@ def runningPreferences(value):
     totalPenalty = {}
     for object in hcFeasibleObjects:
         totalPenalty[object] = 0
-    # print(totalPenalty)
 
     counter = 0
     for claspInput in completePreferences:
         operatingSys = platform.system()
         cmdInput = claspInput
-        # print(cmdInput)
         with open("Output.txt", "w") as text_file:
             text_file.write(str(cmdInput))
         if operatingSys == "Darwin":
@@ -220,46 +202,34 @@ def runningPreferences(value):
             claspIn = os.path.join(ROOT_DIR, 'clasp-3.3.2-win64.exe -n 0 Output.txt')
             claspExecute = subprocess.run(claspIn, stdout=subprocess.PIPE, text=True)
         for line in claspExecute.stdout.splitlines():
-            # print(line)
             if line.startswith('v'):
                 # checks if preference objects are feasible
                 if line in hcFeasibleObjects:
                     totalPenalty[line] += penaltyAmount[counter]
         counter += 1
 
-    # print(totalPenalty)
     sortTotalPenalty = sorted(totalPenalty.items(), key=lambda x: x[1])
     # list of ordered objects from least penalty to most
     # this will get us the optimal object
 
-    # print(sortTotalPenalty)
     omniOptimal = []
     guiOUT = []
     for i in sortTotalPenalty:
-        # print(i[0], i[1])
         if i[1] == sortTotalPenalty[0][1]:
             omniOptimal.append(i)
-    # print(omniOptimal)
     for entry in omniOptimal:
         toConvert = entry[0].split()[1:9]
-        # print(toConvert)
         # invertedAttributeToNumber = {v: k for k, v in attributeToNumber.items()}
         invertedAttributeToNumber = dict([(value, key) for key, value in attributeToNumber.items()])
         # print(invertedAttributeToNumber)
         convertedOutput = ' '.join(str(invertedAttributeToNumber.get(int(a), a)) for a in toConvert)
-        print(convertedOutput)
         guiOUT.append(convertedOutput)
         guiOUT.append('\n')
 
     random1 = random.choice(sortTotalPenalty)
     random2 = random.choice(sortTotalPenalty)
-    print(random1)
-    print(random1[1])
-    print(random2)
-    print(random2[1])
 
     if value == 1:
-        print("Give feasable")
         if len(hcFeasibleObjects) == 0:
             string = "No"
             return string
@@ -267,7 +237,6 @@ def runningPreferences(value):
             string = "Yes"
             return string
     if value == 2:
-        print("Value 2")
         if random1[1] < random2[1]:
             string = str(random1) + " is better than " + str(random2)
             return string
@@ -275,13 +244,11 @@ def runningPreferences(value):
             string = str(random2) + " is better than " + str(random1)
             return string
         else:
-            string = "they are equal"
+            string = str(random1) + "is equal to" + str(random2)
             return string
     if value == 3:
-        print("Value 3")
         return guiOUT[0]
     if value == 4:
-        print("value 4")
         return guiOUT
 
 
@@ -305,8 +272,6 @@ def setupPossibilisticPreferences():
 
         preferenceconversion = ' '.join(str(attributeToNumber.get(a, a)) for a in words)
         tempTest = preferenceconversion.split()
-        # print("before")
-        # print(tempTest)
         for pos in range(len(tempTest)):
             if tempTest[pos] == 'NOT':
                 # if there's a NOT, multiplies the next element by -1
@@ -327,8 +292,6 @@ def setupPossibilisticPreferences():
                 continue
         # add penalty to list penalty amount
         penaltyAmount.append(float(tempTest.pop()))
-        # print(penaltyAmount)
-        # print(tempTest)
         # cnfstring is going to be our input for CLASP
         booleanVars = len(attributeToNumber) / 2
         cnfString = "p cnf " + str(int(booleanVars)) + " " + str(newLines) + "\n"
@@ -340,11 +303,8 @@ def setupPossibilisticPreferences():
             else:
                 cnfString += str(chunk) + ' '
         cnfString = cnfString + '0'
-        # print(cnfString)
         # add complete clasp string to completePreferences
         completePreferences.append(cnfString)
-    # print(completePreferences) 
-    # print(penaltyAmount)
 
 
 def runningPossibilisticPreferences(value):
@@ -352,7 +312,6 @@ def runningPossibilisticPreferences(value):
     totalTolerance = {}
     for object in hcFeasibleObjects:
         totalTolerance[object] = 1
-    # print(totalPenalty)
 
     counter = 0
     for claspInput in completePreferences:
@@ -370,44 +329,32 @@ def runningPossibilisticPreferences(value):
             claspIn = os.path.join(ROOT_DIR, 'clasp-3.3.2-win64.exe -n 0 Output.txt')
             claspExecute = subprocess.run(claspIn, stdout=subprocess.PIPE, text=True)
         for line in claspExecute.stdout.splitlines():
-            # print(line)
             if line.startswith('v'):
                 # checks if preference objects are feasible
                 if line in hcFeasibleObjects:
                     if (1 - penaltyAmount[counter]) < totalTolerance[line]:
                         totalTolerance[line] = 1 - penaltyAmount[counter]
-                        # print(penaltyAmount[counter])
-                        # print(1.00 - penaltyAmount[counter])
         counter += 1
 
-    # print(totalPenalty)
     sortTotalTolerance = sorted(totalTolerance.items(), key=lambda x: x[1])
     # list of ordered objects from least penalty to most
     # this will get us the optimal object
-    # print(sortTotalTolerance)
     omniOptimal = []
 
     for i in sortTotalTolerance:
-        # print(i[0], i[1])
         if i[1] == sortTotalTolerance[0][1]:
             omniOptimal.append(i)
-    # print(omniOptimal)
     guiOUT = []
     for entry in omniOptimal:
         toConvert = entry[0].split()[1:9]
-        # print(toConvert)
-        # invertedAttributeToNumber = {v: k for k, v in attributeToNumber.items()}
         invertedAttributeToNumber = dict([(value, key) for key, value in attributeToNumber.items()])
-        # print(invertedAttributeToNumber)
         convertedOutput = ' '.join(str(invertedAttributeToNumber.get(int(a), a)) for a in toConvert)
-        print(convertedOutput)
         guiOUT.append(convertedOutput)
         guiOUT.append('\n')
 
     random1 = random.choice(sortTotalTolerance)
     random2 = random.choice(sortTotalTolerance)
     if value == 1:
-        print("Give feasable")
         if len(hcFeasibleObjects) == 0:
             string = "No"
             return string
@@ -415,7 +362,6 @@ def runningPossibilisticPreferences(value):
             string = "Yes"
             return string
     if value == 2:
-        print("Value 2")
         if random1[1] < random2[1]:
             string = str(random2) + " is better than " + str(random1)
             return string
@@ -423,21 +369,18 @@ def runningPossibilisticPreferences(value):
             string = str(random1) + " is better than " + str(random2)
             return string
         else:
-            string = "They are equal"
+            string = str(random1) + "is equal to" + str(random2)
             return string
     if value == 3:
-        print("Value 3")
         return guiOUT[0]
     if value == 4:
-        print("value 4")
         return guiOUT
-
 
 
 #######################################################################################################
 ## QUALITATIVE CHOICE LOGIC ##
+"""
 def setupQualitativePreferences(value):
-
     # preference replaces the words in the preference file with their numeric value from attributeToNumber dict
     # preferences = files[2].split()
     # conversion = ' '.join(str(attributeToNumber.get(a, a)) for a in preferences)
@@ -454,40 +397,37 @@ def setupQualitativePreferences(value):
 
         preferenceconversion = ' '.join(str(attributeToNumber.get(a, a)) for a in words)
         getIF = preferenceconversion.split("IF")
-        # print(getIF)
-        IFcase = getIF[-1] # this is the if case for the line
-        # print(len(IFcase))
-        # print(IFcase)
-        chunks = getIF[0].split("BT") # these are the ordered BetterThan for this line
+        print("the getIF: " + str(getIF))
+        IFcase = getIF[-1]  # this is the if case for the line
+        print("length of getIF: " + str(len(IFcase)))
+        print("IFcase: " + str(IFcase))
+        chunks = getIF[0].split("BT")  # these are the ordered BetterThan for this line
         # ISSUE WITH BT SEGMENTS THAT HAVE "AND"
-        # print(chunks)
+        print(chunks)
 
         for item in totalQualitative:
             if IFcase not in item:
-                #print(IFcase)
-                #print(item)
+                print("IF CASE NOT IN ITEM: " + IFcase)
+                print("THE ITEM: " + item)
                 totalQualitative[item].append("inf")
             else:
                 point = 1
                 for chunk in chunks:
-                    if chunk in item:   # Doesn't work as wanted. Sees 7 in item with -7 in it. Thus not correct logic.
-                        #print(chunk)
-                        #print(item)
+                    if chunk in item:  # Doesn't work as wanted. Sees 7 in item with -7 in it. Thus not correct logic.
+                        print(chunk)
+                        print(item)
                         totalQualitative[item].append(point)
                         point += 1
-        #print(totalQualitative)
-    
+        print(totalQualitative)
 
     guiOUT = []
     random1 = random.choice(list(totalQualitative.keys()))
-    #ran1 = totalQualitative[random1]
+    # ran1 = totalQualitative[random1]
     random2 = random.choice(list(totalQualitative.keys()))
-    #ran2 = totalQualitative[random2]
+    # ran2 = totalQualitative[random2]
     guiOUT.append(random1)
-    
 
     if value == 1:
-        print("Give feasable")
         if len(hcFeasibleObjects) == 0:
             string = "No"
             return string
@@ -495,7 +435,6 @@ def setupQualitativePreferences(value):
             string = "Yes"
             return string
     if value == 2:
-        print("Value 2")
         if random1[1] < random2[1]:
             string = "random 1 is better"
             return string
@@ -506,12 +445,124 @@ def setupQualitativePreferences(value):
             string = "they are equal"
             return string
     if value == 3:
-        print("Value 3")
         return guiOUT
     if value == 4:
-        print("value 4")
         guiOUT.append(random2)
         return guiOUT
+"""
+
+def setupQualitativePreferences(value):
+    preferenceObjects = files[2].splitlines()
+    totalQualitative = {}
+    for feasableObject in hcFeasibleObjects:
+        totalQualitative[feasableObject] = []
+    inf = 99
+
+    for preferenceObject in preferenceObjects:
+        constraint = preferenceObject.split('IF')[0].strip()
+        ifCase = preferenceObject.split('IF')[1].strip()
+        btList = constraint.split('BT')
+        strippedBTList = [s.strip() for s in btList]
+        btList = strippedBTList
+        for index in range(len(btList)):
+            listItem = str(btList[index]).split()
+            conversion = ''.join(str(attributeToNumber.get(a, a)) for a in listItem)
+            conversion = conversion.replace('AND', ' ')
+            btList[index] = conversion
+        if ifCase != '':
+            ifCase = attributeToNumber.get(ifCase)
+        for feasableObject in hcFeasibleObjects:
+            if ifCase != '':
+                if str(ifCase) not in feasableObject.split():
+                    totalQualitative[feasableObject].append(inf)
+                    continue
+                else:
+                    satisfy = 0
+                    for condition in btList:
+                        attributes = len(attributeToNumber) / 2
+                        lines = attributes + 1
+                        claspString = "p cnf " + str(int(attributes)) + " " + str(int(lines)) + "\n"
+                        claspString += str(condition) + " 0\n"
+                        for pos in range(len(feasableObject) - 1):
+                            if feasableObject[pos+1] == '-':
+                                claspString += feasableObject[pos + 1]
+                                continue
+                            elif feasableObject[pos+1] == ' ':
+                                continue
+                            elif feasableObject[pos+1] == '0':
+                                continue
+                            else:
+                                claspString += feasableObject[pos + 1]
+                                claspString += " 0\n"
+                        # print(claspString)
+                        cmdInput = claspString
+                        with open("Output.txt", "w") as text_file:
+                            text_file.write(str(cmdInput))
+                        operatingSys = platform.system()
+                        if operatingSys == "Darwin":
+                            change = "cd " + ROOT_DIR
+                            claspIn = change + "; ./clasp-3.3.2-x86_64-macosx Output.txt"
+                            claspExecute = subprocess.run(claspIn, stdout=subprocess.PIPE, shell=True, text=True)
+                        else:
+                            claspIn = os.path.join(ROOT_DIR, 'clasp-3.3.2-win64.exe Output.txt')
+                            claspExecute = subprocess.run(claspIn, stdout=subprocess.PIPE, text=True)
+                            # print(claspExecute.stdout.splitlines())
+                        for line in claspExecute.stdout.splitlines():
+                            if line.startswith('s SATISFIABLE'):
+                                if satisfy == 0:
+                                    totalQualitative[feasableObject].append(btList.index(condition) + 1)
+                                satisfy = 1
+                                continue
+                            elif line.__contains__('UNSATISFIABLE'):
+                                continue
+                    if satisfy == 0:
+                        totalQualitative[feasableObject].append(inf)
+                        continue
+            else:
+                satisfy = 0
+                for condition in btList:
+                    attributes = len(attributeToNumber) / 2
+                    lines = attributes + 1
+                    claspString = "p cnf " + str(int(attributes)) + " " + str(int(lines)) + "\n"
+                    claspString += str(condition) + " 0\n"
+                    for pos in range(len(feasableObject) - 1):
+                        if feasableObject[pos + 1] == '-':
+                            claspString += feasableObject[pos + 1]
+                            continue
+                        elif feasableObject[pos + 1] == ' ':
+                            continue
+                        elif feasableObject[pos + 1] == '0':
+                            continue
+                        else:
+                            claspString += feasableObject[pos + 1]
+                            claspString += " 0\n"
+                    cmdInput = claspString
+                    with open("Output.txt", "w") as text_file:
+                        text_file.write(str(cmdInput))
+                    operatingSys = platform.system()
+                    if operatingSys == "Darwin":
+                        change = "cd " + ROOT_DIR
+                        claspIn = change + "; ./clasp-3.3.2-x86_64-macosx Output.txt"
+                        claspExecute = subprocess.run(claspIn, stdout=subprocess.PIPE, shell=True, text=True)
+                    else:
+                        claspIn = os.path.join(ROOT_DIR, 'clasp-3.3.2-win64.exe Output.txt')
+                        claspExecute = subprocess.run(claspIn, stdout=subprocess.PIPE, text=True)
+                    for line in claspExecute.stdout.splitlines():
+                        if line.startswith('s SATISFIABLE'):
+                            if satisfy == 0:
+                                totalQualitative[feasableObject].append(btList.index(condition) + 1)
+                            satisfy = 1
+                            continue
+                        elif line.__contains__('UNSATISFIABLE'):
+                            continue
+                if satisfy == 0:
+                    totalQualitative[feasableObject].append(inf)
+                    continue
+
+    # print(totalQualitative)
+
+
+
 
 
 #######################################################################################################
@@ -520,8 +571,9 @@ def setupQualitativePreferences(value):
 window = Tk()
 window.title = "Enter files"
 window.geometry("260x550")
-#window.eval('tk::PlaceWindow . center')
 
+
+# window.eval('tk::PlaceWindow . center')
 
 
 def chooseFile():
@@ -533,6 +585,7 @@ def chooseFile():
     # print(lines)
     files.append(str(lines))
 
+
 def choosePenalty():
     Tk().withdraw()  # we don't want a full GUI, so keep the root window from appearing
     filename = askopenfilename()  # show an "Open" dialog box and return the path to the selected file
@@ -543,6 +596,7 @@ def choosePenalty():
     files.append(str(lines))
     global preferenceFile
     preferenceFile = 1
+
 
 def choosePossibilistic():
     Tk().withdraw()  # we don't want a full GUI, so keep the root window from appearing
@@ -572,13 +626,16 @@ def chooseFeasability():
     global option
     option = 1
 
+
 def chooseExemplification():
     global option
     option = 2
 
+
 def chooseOptimization():
     global option
     option = 3
+
 
 def chooseOmni():
     global option
@@ -610,7 +667,6 @@ def done():
     elif preferenceFile == 3:
         label.config(text=setupQualitativePreferences(option))
 
-    print(option)
     root.mainloop()
     # window.destroy()  # if pressed first, then ends whole process
 
@@ -623,7 +679,7 @@ newBg = ImageTk.PhotoImage(resizedd)
 # bgLabel = Label(image=newAttributeBTN)
 
 # create canvas
-myCanvas = Canvas(window, width=500, height=500, borderwidth=0,highlightthickness=0,border=0)
+myCanvas = Canvas(window, width=500, height=500, borderwidth=0, highlightthickness=0, border=0)
 myCanvas.pack(fill="both", expand=True)
 
 # set image in canvas
@@ -697,30 +753,31 @@ resized12 = omniOptimizationImg.resize((270, 38), Image.ANTIALIAS)
 newOmniOptimizationBTN = ImageTk.PhotoImage(resized12)
 
 # adding needed buttons
-attributesButton = Button(window, image=newAttributeBTN, command=chooseFile, borderwidth=0,highlightthickness=0,border=0)
-constraintButton = Button(window, image=newHcBTN, command=chooseFile, borderwidth=0,highlightthickness=0,border=0)
-PenaltyButton = Button(window, image=newPenaltyBTN, command=choosePenalty, borderwidth=0,highlightthickness=0,border=0)
-possibilisticButton = Button(window, image=newPossibilisticBTN, command=choosePossibilistic, borderwidth=0,highlightthickness=0,border=0)
-qualitativeButton = Button(window, image=newQualitativeBTN, command=chooseQualitative, borderwidth=0,highlightthickness=0,border=0)
-feasibilityButton = Button(window, image=newFeasibilityBTN,command=chooseFeasability, borderwidth=0,highlightthickness=0,border=0)
-exemplificationButton = Button(window,image=newExemplificationBTN, command=chooseExemplification, borderwidth=0,highlightthickness=0,border=0)
-optimizationButton = Button(window,image=newOptimizationBTN, command=chooseOptimization, borderwidth=0,highlightthickness=0,border=0)
-omniOptimizationButton = Button(window, image=newOmniOptimizationBTN,command=chooseOmni, borderwidth=0,highlightthickness=0,border=0)
+attributesButton = Button(window, image=newAttributeBTN, command=chooseFile, borderwidth=0, highlightthickness=0, border=0)
+constraintButton = Button(window, image=newHcBTN, command=chooseFile, borderwidth=0, highlightthickness=0, border=0)
+PenaltyButton = Button(window, image=newPenaltyBTN, command=choosePenalty, borderwidth=0, highlightthickness=0,border=0)
+possibilisticButton = Button(window, image=newPossibilisticBTN, command=choosePossibilistic, borderwidth=0, highlightthickness=0, border=0)
+qualitativeButton = Button(window, image=newQualitativeBTN, command=chooseQualitative, borderwidth=0,highlightthickness=0, border=0)
+feasibilityButton = Button(window, image=newFeasibilityBTN, command=chooseFeasability, borderwidth=0, highlightthickness=0, border=0)
+exemplificationButton = Button(window, image=newExemplificationBTN, command=chooseExemplification, borderwidth=0, highlightthickness=0, border=0)
+optimizationButton = Button(window, image=newOptimizationBTN, command=chooseOptimization, borderwidth=0, highlightthickness=0, border=0)
+omniOptimizationButton = Button(window, image=newOmniOptimizationBTN, command=chooseOmni, borderwidth=0, highlightthickness=0, border=0)
 
-#temporary for testing
-doneButton = Button(window, command=done,image=newDoneBTN,borderwidth=0,highlightthickness=0,border=0)# text="done")
+# temporary for testing
+doneButton = Button(window, command=done, image=newDoneBTN, borderwidth=0, highlightthickness=0,
+                    border=0)  # text="done")
 doneButtonWindow = myCanvas.create_window(130, 530, anchor="center", window=doneButton)
 
 # creating windows of buttons and adding onto canvas
-attributesButtonWindow = myCanvas.create_window(130,55, anchor="c", window=attributesButton)
-constraintButtonWindow = myCanvas.create_window(130,100, anchor="c", window=constraintButton)
-penaltyButtonWindow = myCanvas.create_window(130,175, anchor="c", window=PenaltyButton)
-possibilisticButtonWindow = myCanvas.create_window(130,220, anchor="c", window=possibilisticButton)
-qualitativeButtonWindow = myCanvas.create_window(130,265, anchor="c", window=qualitativeButton)
-feasibilityButtonWindow = myCanvas.create_window(130,335, anchor="c", window=feasibilityButton)
-exemplificationButtonWindow = myCanvas.create_window(130,380, anchor="c", window=exemplificationButton)
-optimizationButtonWindow = myCanvas.create_window(130,425, anchor="c", window=optimizationButton)
-omniOptimizationButtonWindow = myCanvas.create_window(130,470, anchor="c", window=omniOptimizationButton)
+attributesButtonWindow = myCanvas.create_window(130, 55, anchor="c", window=attributesButton)
+constraintButtonWindow = myCanvas.create_window(130, 100, anchor="c", window=constraintButton)
+penaltyButtonWindow = myCanvas.create_window(130, 175, anchor="c", window=PenaltyButton)
+possibilisticButtonWindow = myCanvas.create_window(130, 220, anchor="c", window=possibilisticButton)
+qualitativeButtonWindow = myCanvas.create_window(130, 265, anchor="c", window=qualitativeButton)
+feasibilityButtonWindow = myCanvas.create_window(130, 335, anchor="c", window=feasibilityButton)
+exemplificationButtonWindow = myCanvas.create_window(130, 380, anchor="c", window=exemplificationButton)
+optimizationButtonWindow = myCanvas.create_window(130, 425, anchor="c", window=optimizationButton)
+omniOptimizationButtonWindow = myCanvas.create_window(130, 470, anchor="c", window=omniOptimizationButton)
 
 # # add a drop down
 # def selected(event):
