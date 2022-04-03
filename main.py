@@ -558,9 +558,63 @@ def setupQualitativePreferences(value):
                 if satisfy == 0:
                     totalQualitative[feasableObject].append(inf)
                     continue
-
     # print(totalQualitative)
 
+    random1 = random.choice(list(totalQualitative.keys()))
+    # ran1 = totalQualitative[random1]
+    random2 = random.choice(list(totalQualitative.keys()))
+    # ran2 = totalQualitative[random2]
+
+    # print(totalQualitative)
+    if value == 1:
+        if len(hcFeasibleObjects) == 0:
+            string = "No"
+            return string
+        else:
+            string = "Yes"
+            return string
+    if value == 2:
+        invertedAttributeToNumber = dict([(value, key) for key, value in attributeToNumber.items()])
+
+        better1 = 0
+        better2 = 0
+        list1 = totalQualitative[random1]
+        list2 = totalQualitative[random2]
+        # print(list1)
+        # print(list2)
+        split1 = random1.split()
+        split2 = random2.split()
+        random1 = split1
+        random2 = split2
+        random1.remove('v')
+        random2.remove('v')
+        random1.remove('0')
+        random2.remove('0')
+        random1Convert = ' '.join(str(invertedAttributeToNumber.get(int(a), a)) for a in random1)
+        random2Convert = ' '.join(str(invertedAttributeToNumber.get(int(a), a)) for a in random2)
+        if len(list1) == len(list2) and len(list1) == sum([1 for i, j in zip(list1, list2) if i == j]):
+            string = str(random1Convert) + " is equal to " + str(random2Convert)
+            return string
+        for pos in range(len(list1)):
+            if list1[pos] < list2[pos]:
+                better1 += 1
+            elif list2[pos] < list1[pos]:
+                better2 += 1
+
+        if better1 == better2:
+            string = str(random1Convert) + " is incomparable to " + str(random2Convert)
+            return string
+        if better1 > better2:
+            string = str(random1Convert) + " is better than " + str(random2Convert)
+            return string
+        if better1 < better2:
+            string = str(random2Convert) + " is better than " + str(random1Convert)
+            return string
+
+    if value == 3:
+        print("hi")
+    if value == 4:
+        print("hi")
 
 
 
