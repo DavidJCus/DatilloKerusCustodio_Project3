@@ -612,11 +612,45 @@ def setupQualitativePreferences(value):
             return string
 
     if value == 3:
-        print("hi")
+        sums = []
+
+        for position in range(len(totalQualitative)):
+            numList = totalQualitative[hcFeasibleObjects[position]]
+            total = 0
+            for number in numList:
+                total += number
+            sums.insert(position, total)
+        minpos = sums.index(min(sums))
+        string = "Optimal Object: \n"
+        feasibleSplit = hcFeasibleObjects[minpos].split()
+        feasibleSplit.remove('v')
+        feasibleSplit.remove('0')
+        invertedAttributeToNumber = dict([(value, key) for key, value in attributeToNumber.items()])
+        feasibleObjectConvert = ' '.join(str(invertedAttributeToNumber.get(int(a), a)) for a in feasibleSplit)
+        string += feasibleObjectConvert
+        return string
     if value == 4:
-        print("hi")
+        sums = []
 
+        for position in range(len(totalQualitative)):
+            numList = totalQualitative[hcFeasibleObjects[position]]
+            total = 0
+            for number in numList:
+                total += number
+            sums.insert(position, total)
+        print(sums)
 
+        minpos = min(sums)
+        omni = [i for i, j in enumerate(sums) if j == minpos]
+        string = "Omni-Optimal objects: \n"
+        for item in omni:
+            feasibleSplit = hcFeasibleObjects[item].split()
+            feasibleSplit.remove('v')
+            feasibleSplit.remove('0')
+            invertedAttributeToNumber = dict([(value, key) for key, value in attributeToNumber.items()])
+            feasibleObjectConvert = ' '.join(str(invertedAttributeToNumber.get(int(a), a)) for a in feasibleSplit)
+            string += str(feasibleObjectConvert) + "\n"
+        return string
 
 
 #######################################################################################################
