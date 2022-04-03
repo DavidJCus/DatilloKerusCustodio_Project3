@@ -755,8 +755,11 @@ def done():
     elif preferenceFile == 3:
         label.config(text=setupQualitativePreferences(option))
 
+    endButton = Button(root, text="Close and End Program", command=exit)
+    endButton.pack(pady=10)
+
     root.mainloop()
-    # window.destroy()  # if pressed first, then ends whole process
+    window.destroy()  # if pressed first, then ends whole process
 
 
 # define image for canvas
