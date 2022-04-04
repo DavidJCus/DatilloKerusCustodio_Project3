@@ -7,6 +7,7 @@ Instructions to build:
   4. Be sure to install tkinter and pillow packages
   
 Instructions run your system:
+*Please Note Qualitative Logic will take a while to calculate and output*
   1. The program runs a chosen task only once, this means in order to run again you need to click the "Close and End Program" button on the output window and rerun
   2. When you run the program, the GUI will appear
   3. Click on the top most button "Attributes"
