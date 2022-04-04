@@ -67,17 +67,6 @@ def setupHardConstraints():
 
     newNumbers.append(0)  # adds a 0 to the last line
 
-    """
-    # this gets the unique attributes for the first line of CLASP CNF input
-    uniqueAttributes = -1  # this method counts 0 as a unique value, so we account for that by starting at -1
-    uniqueList = []
-    num3 = int(len(newNumbers))
-    for a in range(num3):
-        if newNumbers[a] != '\n' and abs(int(newNumbers[a])) not in uniqueList:
-            uniqueAttributes += 1
-            uniqueList.append(abs(int(newNumbers[a])))
-    """
-
     booleanVars = len(attributeToNumber) / 2
 
     # final string is going to be our input for CLASP
@@ -113,29 +102,17 @@ def claspInput():
 
     for line in claspExecute.stdout.splitlines():
         if line.__contains__('SATISFIABLE'):
-            # print("Returned Satisfiable")
-            # return 1
             continue
         elif line.__contains__('UNSATISFIABLE'):
             continue
-            # return 0
         elif line.__contains__('UNKNOWN'):
             continue
-            # return 2
         elif line.startswith('v'):
             hcFeasibleObjects.append(line)
-    # print(hcFeasibleObjects)
-
 
 #######################################################################################################
 ## PENALTY LOGIC ##
 def setupPreferences():
-    # WE NEED A WAY TO KNOW WHICH PREFERENCE WE ARE WORKING WITH
-    # EACH BUTTON IS LINKED TO A CERTAIN INPUT FILE FOR THIS
-
-    # preference replaces the words in the preference file with their numeric value from attributeToNumber dict
-    # preferences = files[2].split()
-    # conversion = ' '.join(str(attributeToNumber.get(a, a)) for a in preferences)
     preferenceObjects = str(files[2]).splitlines()
 
     # each index in array holds the clasp code per line in preference file input
@@ -219,8 +196,6 @@ def runningPreferences(value):
             omniOptimal.append(i)
     for entry in omniOptimal:
         toConvert = entry[0].split()[1:9]
-        # invertedAttributeToNumber = {v: k for k, v in attributeToNumber.items()}
-        # print(invertedAttributeToNumber)
         convertedOutput = ' '.join(str(invertedAttributeToNumber.get(int(a), a)) for a in toConvert)
         guiOUT.append(convertedOutput)
         guiOUT.append('\n')
@@ -267,12 +242,7 @@ def runningPreferences(value):
 #######################################################################################################
 ## POSSIBILISTIC LOGIC ##
 def setupPossibilisticPreferences():
-    # WE NEED A WAY TO KNOW WHICH PREFERENCE WE ARE WORKING WITH
-    # EACH BUTTON IS LINKED TO A CERTAIN INPUT FILE FOR THIS
 
-    # preference replaces the words in the preference file with their numeric value from attributeToNumber dict
-    # preferences = files[2].split()
-    # conversion = ' '.join(str(attributeToNumber.get(a, a)) for a in preferences)
     preferenceObjects = str(files[2]).splitlines()
 
     # each index in array holds the clasp code per line in preference file input
@@ -329,7 +299,7 @@ def runningPossibilisticPreferences(value):
     for claspInput in completePreferences:
 
         cmdInput = claspInput
-        # print(cmdInput)
+       
         with open("Output.txt", "w") as text_file:
             text_file.write(str(cmdInput))
         operatingSys = platform.system()
@@ -366,7 +336,6 @@ def runningPossibilisticPreferences(value):
 
     random1 = random.choice(sortTotalTolerance)
     random2 = random.choice(sortTotalTolerance)
-  
  
     split1 = random1[0].split()
     split2 = random2[0].split()
@@ -406,77 +375,6 @@ def runningPossibilisticPreferences(value):
 
 #######################################################################################################
 ## QUALITATIVE CHOICE LOGIC ##
-"""
-def setupQualitativePreferences(value):
-    # preference replaces the words in the preference file with their numeric value from attributeToNumber dict
-    # preferences = files[2].split()
-    # conversion = ' '.join(str(attributeToNumber.get(a, a)) for a in preferences)
-    preferenceObjects = str(files[2]).splitlines()
-    totalQualitative = {}
-    for object in hcFeasibleObjects:
-        totalQualitative[object] = []
-    # each index in array holds the clasp code per line in preference file input
-    # at least that is current goal
-
-    for line in preferenceObjects:
-        words = line.split()
-        BTcounter = 0
-
-        preferenceconversion = ' '.join(str(attributeToNumber.get(a, a)) for a in words)
-        getIF = preferenceconversion.split("IF")
-        print("the getIF: " + str(getIF))
-        IFcase = getIF[-1]  # this is the if case for the line
-        print("length of getIF: " + str(len(IFcase)))
-        print("IFcase: " + str(IFcase))
-        chunks = getIF[0].split("BT")  # these are the ordered BetterThan for this line
-        # ISSUE WITH BT SEGMENTS THAT HAVE "AND"
-        print(chunks)
-
-        for item in totalQualitative:
-            if IFcase not in item:
-                print("IF CASE NOT IN ITEM: " + IFcase)
-                print("THE ITEM: " + item)
-                totalQualitative[item].append("inf")
-            else:
-                point = 1
-                for chunk in chunks:
-                    if chunk in item:  # Doesn't work as wanted. Sees 7 in item with -7 in it. Thus not correct logic.
-                        print(chunk)
-                        print(item)
-                        totalQualitative[item].append(point)
-                        point += 1
-        print(totalQualitative)
-
-    guiOUT = []
-    random1 = random.choice(list(totalQualitative.keys()))
-    # ran1 = totalQualitative[random1]
-    random2 = random.choice(list(totalQualitative.keys()))
-    # ran2 = totalQualitative[random2]
-    guiOUT.append(random1)
-
-    if value == 1:
-        if len(hcFeasibleObjects) == 0:
-            string = "No"
-            return string
-        else:
-            string = "Yes"
-            return string
-    if value == 2:
-        if random1[1] < random2[1]:
-            string = "random 1 is better"
-            return string
-        elif random1[1] > random2[1]:
-            string = "random 2 is better"
-            return string
-        else:
-            string = "they are equal"
-            return string
-    if value == 3:
-        return guiOUT
-    if value == 4:
-        guiOUT.append(random2)
-        return guiOUT
-"""
 
 def setupQualitativePreferences(value):
     preferenceObjects = files[2].splitlines()
@@ -521,7 +419,7 @@ def setupQualitativePreferences(value):
                             else:
                                 claspString += feasableObject[pos + 1]
                                 claspString += " 0\n"
-                        # print(claspString)
+                        
                         cmdInput = claspString
                         with open("Output.txt", "w") as text_file:
                             text_file.write(str(cmdInput))
@@ -533,7 +431,7 @@ def setupQualitativePreferences(value):
                         else:
                             claspIn = os.path.join(ROOT_DIR, 'clasp-3.3.2-win64.exe Output.txt')
                             claspExecute = subprocess.run(claspIn, stdout=subprocess.PIPE, text=True)
-                            # print(claspExecute.stdout.splitlines())
+                           
                         for line in claspExecute.stdout.splitlines():
                             if line.startswith('s SATISFIABLE'):
                                 if satisfy == 0:
@@ -585,14 +483,11 @@ def setupQualitativePreferences(value):
                 if satisfy == 0:
                     totalQualitative[feasableObject].append(inf)
                     continue
-    # print(totalQualitative)
 
     random1 = random.choice(list(totalQualitative.keys()))
-    # ran1 = totalQualitative[random1]
+    
     random2 = random.choice(list(totalQualitative.keys()))
-    # ran2 = totalQualitative[random2]
-
-    # print(totalQualitative)
+    
     if value == 1:
         if len(hcFeasibleObjects) == 0:
             string = "No"
@@ -607,8 +502,7 @@ def setupQualitativePreferences(value):
         better2 = 0
         list1 = totalQualitative[random1]
         list2 = totalQualitative[random2]
-        # print(list1)
-        # print(list2)
+
         split1 = random1.split()
         split2 = random2.split()
         random1 = split1
@@ -665,7 +559,6 @@ def setupQualitativePreferences(value):
             for number in numList:
                 total += number
             sums.insert(position, total)
-        print(sums)
 
         minpos = min(sums)
         omni = [i for i, j in enumerate(sums) if j == minpos]
@@ -686,28 +579,25 @@ def setupQualitativePreferences(value):
 window = Tk()
 window.title = "Enter files"
 window.geometry("260x550")
-
-
 # window.eval('tk::PlaceWindow . center')
-
 
 def chooseFile():
     Tk().withdraw()  # we don't want a full GUI, so keep the root window from appearing
     filename = askopenfilename()  # show an "Open" dialog box and return the path to the selected file
-    # print("You chose: " + filename)
+
     with open(filename) as f:
         lines = f.read().replace(',', '')
-    # print(lines)
+
     files.append(str(lines))
 
 
 def choosePenalty():
     Tk().withdraw()  # we don't want a full GUI, so keep the root window from appearing
     filename = askopenfilename()  # show an "Open" dialog box and return the path to the selected file
-    # print("You chose: " + filename)
+   
     with open(filename) as f:
         lines = f.read().replace(',', '')
-    # print(lines)
+    
     files.append(str(lines))
     global preferenceFile
     preferenceFile = 1
@@ -716,10 +606,10 @@ def choosePenalty():
 def choosePossibilistic():
     Tk().withdraw()  # we don't want a full GUI, so keep the root window from appearing
     filename = askopenfilename()  # show an "Open" dialog box and return the path to the selected file
-    # print("You chose: " + filename)
+    
     with open(filename) as f:
         lines = f.read().replace(',', '')
-    # print(lines)
+   
     files.append(str(lines))
     global preferenceFile
     preferenceFile = 2
@@ -728,10 +618,10 @@ def choosePossibilistic():
 def chooseQualitative():
     Tk().withdraw()  # we don't want a full GUI, so keep the root window from appearing
     filename = askopenfilename()  # show an "Open" dialog box and return the path to the selected file
-    # print("You chose: " + filename)
+    
     with open(filename) as f:
         lines = f.read().replace(',', '')
-    # print(lines)
+ 
     files.append(str(lines))
     global preferenceFile
     preferenceFile = 3
@@ -765,9 +655,6 @@ def done():
     elif preferenceFile == 2:
         setupPossibilisticPreferences()
 
-    # setupPossibilisticPreferences()
-    # setupQualitativePreferences()
-    # runningPossibilisticPreferences()
     root = Tk()
     root.title('Output')
     root.geometry("500x450")
@@ -896,38 +783,6 @@ feasibilityButtonWindow = myCanvas.create_window(130, 335, anchor="center", wind
 exemplificationButtonWindow = myCanvas.create_window(130, 380, anchor="center", window=exemplificationButton)
 optimizationButtonWindow = myCanvas.create_window(130, 425, anchor="center", window=optimizationButton)
 omniOptimizationButtonWindow = myCanvas.create_window(130, 470, anchor="center", window=omniOptimizationButton)
-
-# # add a drop down
-# def selected(event):
-#     # if clicked.get() == "Select attributes file": popup to submit then execute below code
-#     Browse = Button(window, text="Browse", command=chooseFile)
-#     doneButton = Button(window, text="Done", command=done)
-#     myCanvas.create_window(100, 200, anchor="center", window=Browse)
-#     myCanvas.create_window(250, 250, anchor="center", window=doneButton)
-
-
-# options = [
-#     "Default",
-#     "Attributes File",
-#     "Hard Constraints File",
-#     "Preference File"
-# ]
-
-# # take in selected val
-# clicked = StringVar()
-# # set default val
-# clicked.set(options[0])
-
-# # provide a menu
-# ddl = OptionMenu(
-#     window,
-#     clicked,
-#     *options,
-#     command=selected
-# )
-# # putting a window for ddl on canvas
-# #ddlWindow = myCanvas.create_window(100, 250, anchor="center", window=ddl)
-
 
 window.mainloop()
 #######################################################################################################
