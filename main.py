@@ -211,7 +211,7 @@ def runningPreferences(value):
     sortTotalPenalty = sorted(totalPenalty.items(), key=lambda x: x[1])
     # list of ordered objects from least penalty to most
     # this will get us the optimal object
-
+    invertedAttributeToNumber = dict([(value, key) for key, value in attributeToNumber.items()])
     omniOptimal = []
     guiOUT = []
     for i in sortTotalPenalty:
@@ -220,7 +220,6 @@ def runningPreferences(value):
     for entry in omniOptimal:
         toConvert = entry[0].split()[1:9]
         # invertedAttributeToNumber = {v: k for k, v in attributeToNumber.items()}
-        invertedAttributeToNumber = dict([(value, key) for key, value in attributeToNumber.items()])
         # print(invertedAttributeToNumber)
         convertedOutput = ' '.join(str(invertedAttributeToNumber.get(int(a), a)) for a in toConvert)
         guiOUT.append(convertedOutput)
@@ -247,13 +246,13 @@ def runningPreferences(value):
             return string
     if value == 2:
         if random1[1] < random2[1]:
-            string = random1Convert + " is better than " + random2Convert
+            string = random1Convert + "\nis better than\n" + random2Convert
             return string
         elif random1[1] > random2[1]:
-            string = random2Convert + " is better than " + random1Convert
+            string = random2Convert + "\nis better than\n" + random1Convert
             return string
         else:
-            string = random1Convert + "is equal to " + random2Convert
+            string = random1Convert + "\nis equal to\n" + random2Convert
             return string
     if value == 3:
         return guiOUT[0]
@@ -349,14 +348,13 @@ def runningPossibilisticPreferences(value):
     # list of ordered objects from least penalty to most
     # this will get us the optimal object
     omniOptimal = []
-
+    invertedAttributeToNumber = dict([(value, key) for key, value in attributeToNumber.items()])
     for i in sortTotalTolerance:
         if i[1] == sortTotalTolerance[0][1]:
             omniOptimal.append(i)
     guiOUT = []
     for entry in omniOptimal:
         toConvert = entry[0].split()[1:9]
-        invertedAttributeToNumber = dict([(value, key) for key, value in attributeToNumber.items()])
         convertedOutput = ' '.join(str(invertedAttributeToNumber.get(int(a), a)) for a in toConvert)
         guiOUT.append(convertedOutput)
         guiOUT.append('\n')
@@ -383,13 +381,13 @@ def runningPossibilisticPreferences(value):
             return string
     if value == 2:
         if random1[1] < random2[1]:
-            string = random2Convert + " is better than " + random1Convert
+            string = random2Convert + "\nis better than\n" + random1Convert
             return string
         elif random1[1] > random2[1]:
-            string = random1Convert + " is better than " + random2Convert
+            string = random1Convert + "\nis better than\n" + random2Convert
             return string
         else:
-            string = random1Convert + "is equal to " + random2Convert
+            string = random1Convert + "\nis equal to\n" + random2Convert
             return string
     if value == 3:
         return guiOUT[0]
@@ -622,13 +620,13 @@ def setupQualitativePreferences(value):
                 better2 += 1
 
         if better1 == better2:
-            string = str(random1Convert) + " is incomparable to " + str(random2Convert)
+            string = str(random1Convert) + "\nis incomparable to\n" + str(random2Convert)
             return string
         if better1 > better2:
-            string = str(random1Convert) + " is better than " + str(random2Convert)
+            string = str(random1Convert) + "\nis better than\n" + str(random2Convert)
             return string
         if better1 < better2:
-            string = str(random2Convert) + " is better than " + str(random1Convert)
+            string = str(random2Convert) + "\nis better than\n" + str(random1Convert)
             return string
 
     if value == 3:
@@ -880,15 +878,15 @@ doneButton = Button(window, command=done, image=newDoneBTN, borderwidth=0, highl
 doneButtonWindow = myCanvas.create_window(130, 530, anchor="center", window=doneButton)
 
 # creating windows of buttons and adding onto canvas
-attributesButtonWindow = myCanvas.create_window(130, 55, anchor="c", window=attributesButton)
-constraintButtonWindow = myCanvas.create_window(130, 100, anchor="c", window=constraintButton)
-penaltyButtonWindow = myCanvas.create_window(130, 175, anchor="c", window=PenaltyButton)
-possibilisticButtonWindow = myCanvas.create_window(130, 220, anchor="c", window=possibilisticButton)
-qualitativeButtonWindow = myCanvas.create_window(130, 265, anchor="c", window=qualitativeButton)
-feasibilityButtonWindow = myCanvas.create_window(130, 335, anchor="c", window=feasibilityButton)
-exemplificationButtonWindow = myCanvas.create_window(130, 380, anchor="c", window=exemplificationButton)
-optimizationButtonWindow = myCanvas.create_window(130, 425, anchor="c", window=optimizationButton)
-omniOptimizationButtonWindow = myCanvas.create_window(130, 470, anchor="c", window=omniOptimizationButton)
+attributesButtonWindow = myCanvas.create_window(130, 55, anchor="center", window=attributesButton)
+constraintButtonWindow = myCanvas.create_window(130, 100, anchor="center", window=constraintButton)
+penaltyButtonWindow = myCanvas.create_window(130, 175, anchor="center", window=PenaltyButton)
+possibilisticButtonWindow = myCanvas.create_window(130, 220, anchor="center", window=possibilisticButton)
+qualitativeButtonWindow = myCanvas.create_window(130, 265, anchor="center", window=qualitativeButton)
+feasibilityButtonWindow = myCanvas.create_window(130, 335, anchor="center", window=feasibilityButton)
+exemplificationButtonWindow = myCanvas.create_window(130, 380, anchor="center", window=exemplificationButton)
+optimizationButtonWindow = myCanvas.create_window(130, 425, anchor="center", window=optimizationButton)
+omniOptimizationButtonWindow = myCanvas.create_window(130, 470, anchor="center", window=omniOptimizationButton)
 
 # # add a drop down
 # def selected(event):
