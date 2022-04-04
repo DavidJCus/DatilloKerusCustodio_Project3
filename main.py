@@ -255,9 +255,13 @@ def runningPreferences(value):
             string = random1Convert + "\nis equal to\n" + random2Convert
             return string
     if value == 3:
-        return guiOUT[0]
+        string = ''.join(guiOUT[0])
+        string = "Optimal Object: \n" + string
+        return string
     if value == 4:
-        return guiOUT
+        string = ''.join(guiOUT)
+        string = "Omni-Optimal objects: \n" + string 
+        return string
 
 
 #######################################################################################################
@@ -353,6 +357,7 @@ def runningPossibilisticPreferences(value):
         if i[1] == sortTotalTolerance[0][1]:
             omniOptimal.append(i)
     guiOUT = []
+    
     for entry in omniOptimal:
         toConvert = entry[0].split()[1:9]
         convertedOutput = ' '.join(str(invertedAttributeToNumber.get(int(a), a)) for a in toConvert)
@@ -390,9 +395,13 @@ def runningPossibilisticPreferences(value):
             string = random1Convert + "\nis equal to\n" + random2Convert
             return string
     if value == 3:
-        return guiOUT[0]
+        string = ''.join(guiOUT[0])
+        string = "Optimal Object: \n" + string
+        return string
     if value == 4:
-        return guiOUT
+        string = ''.join(guiOUT)
+        string = "Omni-Optimal objects: \n" + string 
+        return string
 
 
 #######################################################################################################
