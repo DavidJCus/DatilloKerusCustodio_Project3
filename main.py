@@ -229,6 +229,15 @@ def runningPreferences(value):
     random1 = random.choice(sortTotalPenalty)
     random2 = random.choice(sortTotalPenalty)
 
+    split1 = random1[0].split()
+    split2 = random2[0].split()
+    split1.remove('v')
+    split2.remove('v')
+    split1.remove('0')
+    split2.remove('0')
+    random1Convert = ' '.join(str(invertedAttributeToNumber.get(int(a), a)) for a in split1)
+    random2Convert = ' '.join(str(invertedAttributeToNumber.get(int(a), a)) for a in split2)
+
     if value == 1:
         if len(hcFeasibleObjects) == 0:
             string = "No"
@@ -238,13 +247,13 @@ def runningPreferences(value):
             return string
     if value == 2:
         if random1[1] < random2[1]:
-            string = str(random1) + " is better than " + str(random2)
+            string = random1Convert + " is better than " + random2Convert
             return string
         elif random1[1] > random2[1]:
-            string = str(random2) + " is better than " + str(random1)
+            string = random2Convert + " is better than " + random1Convert
             return string
         else:
-            string = str(random1) + "is equal to" + str(random2)
+            string = random1Convert + "is equal to " + random2Convert
             return string
     if value == 3:
         return guiOUT[0]
@@ -354,6 +363,17 @@ def runningPossibilisticPreferences(value):
 
     random1 = random.choice(sortTotalTolerance)
     random2 = random.choice(sortTotalTolerance)
+  
+ 
+    split1 = random1[0].split()
+    split2 = random2[0].split()
+    split1.remove('v')
+    split2.remove('v')
+    split1.remove('0')
+    split2.remove('0')
+    random1Convert = ' '.join(str(invertedAttributeToNumber.get(int(a), a)) for a in split1)
+    random2Convert = ' '.join(str(invertedAttributeToNumber.get(int(a), a)) for a in split2)
+
     if value == 1:
         if len(hcFeasibleObjects) == 0:
             string = "No"
@@ -363,13 +383,13 @@ def runningPossibilisticPreferences(value):
             return string
     if value == 2:
         if random1[1] < random2[1]:
-            string = str(random2) + " is better than " + str(random1)
+            string = random2Convert + " is better than " + random1Convert
             return string
         elif random1[1] > random2[1]:
-            string = str(random1) + " is better than " + str(random2)
+            string = random1Convert + " is better than " + random2Convert
             return string
         else:
-            string = str(random1) + "is equal to" + str(random2)
+            string = random1Convert + "is equal to " + random2Convert
             return string
     if value == 3:
         return guiOUT[0]
