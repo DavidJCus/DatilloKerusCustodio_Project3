@@ -34,43 +34,39 @@ def setUpAttribute():
 #######################################################################################################
 def setupHardConstraints():
     # conversion replaces the words in the hard constraints file with their numeric value from attributeToNumber dict
-    constraints = files[1].split()
-    conversion = ' '.join(str(attributeToNumber.get(a, a)) for a in constraints)
+    constraints = str(files[1]).splitlines()
+    newNumbers = []
+    newLines = 0
+    # each index in array holds the clasp code per line in preference file input
+    # at least that is current goal
+    for line in constraints:
+        words = line.split()
+        conversion = ' '.join(str(attributeToNumber.get(a, a)) for a in words)
+        line = conversion.split()
+        skip = 0
+        for pos in range(len(line)):
+            if skip == 1:
+                skip = 0
+                continue
+            if line[pos] == 'NOT':
+                # if there's a NOT, multiplies the next element by -1
+                line[pos + 1] = -1 * int(line[pos + 1])
+                newNumbers.append(line[pos + 1])
+                skip = 1
+                continue
+            if line[pos] == 'OR':
+                continue
 
-    newNumbers = []  # this will store an array of the numbers we get after computing though the NOTs and ORs
-    conversionSplit = conversion.split()
-    num = int(len(conversionSplit))
-    skip = 0
-    lines = 1
-    for b in range(num):
-        if skip == 1:
-            skip = 0
-            continue
-        if conversionSplit[b] == 'NOT' and b > 1 and conversionSplit[b - 1] != 'OR':
-            # this adds the 0 and new line to the array of numbers.
-            newNumbers.append(0)
-            newNumbers.append('\n')
-            lines += 1
-        if conversionSplit[b] == 'NOT':
-            # if there's a NOT, multiplies the next element by -1, adds it to the array, then skips computing
-            # the next element
-            number = -1 * int(conversionSplit[b + 1])
-            newNumbers.append(number)
-            skip = 1
-            continue
-        if conversionSplit[b] == 'OR':
-            # if there's an OR, does nothing and just skips
-            continue
-        if conversionSplit[b] != 'NOT' or conversionSplit[b] != 'OR':
-            # if there's no NOT or an OR, just adds the number to the array
-            newNumbers.append(int(conversionSplit[b]))
+            if line[pos] != 'NOT' and line[pos] != 'OR':
+                newNumbers.append(line[pos])
+        newNumbers.append(0)
+        newLines += 1
+        newNumbers.append('\n')
 
-    newNumbers.append(0)  # adds a 0 to the last line
-
+    # add penalty to list penalty amount
+    # cnfstring is going to be our input for CLASP
     booleanVars = len(attributeToNumber) / 2
-
-    # final string is going to be our input for CLASP
-    finalString = "p cnf " + str(int(booleanVars)) + " " + str(lines) + "\n"
+    finalString = "p cnf " + str(int(booleanVars)) + " " + str(newLines) + "\n"
     num2 = int(len(newNumbers))
     for num in range(num2):
         if num < num2 and [num + 1] == '\n':
@@ -81,8 +77,10 @@ def setupHardConstraints():
             continue
         finalString += str(newNumbers[num]) + " "
         if num == num2:
-            finalString += str(newNumbers[num])
+                finalString += str(newNumbers[num])
     return finalString
+    # add complete clasp string to completePreferences
+
 
 
 #######################################################################################################
@@ -663,7 +661,10 @@ def done():
     label = Label(root, text='')
     label.pack(pady=20)
     if preferenceFile == 1:
-        label.config(text=runningPreferences(option))
+        if len(hcFeasibleObjects) == 0:
+            label.config(text="No")
+        else:
+            label.config(text=runningPreferences(option))
     elif preferenceFile == 2:
         label.config(text=runningPossibilisticPreferences(option))
     elif preferenceFile == 3:
